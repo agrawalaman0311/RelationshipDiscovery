@@ -503,3 +503,35 @@ All governance artifacts, prompts, outputs, and implementation artifacts must be
 ## Status
 
 Approved
+
+# ADR-036: Environment Strategy
+
+## Decision
+
+Single database deployment.
+
+Database
+
+RELATIONSHIP_DISCOVERY_DB
+
+## Status
+
+Approved
+
+# ADR-037: Schema Strategy
+
+## Decision
+
+The solution will use the following schemas:
+| Schema | Purpose                         |
+| ------ | ------------------------------- |
+| SRC    | Source Systems                  |
+| MD     | Metadata                        |
+| LOG    | Action Logs                     |
+| INTM   | Intermediate / System of Record |
+| FINAL  | Presentation Layer              |
+| RPT    | Reporting                       |
+
+## Status
+
+Approved
