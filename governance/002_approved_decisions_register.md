@@ -535,3 +535,19 @@ The solution will use the following schemas:
 ## Status
 
 Approved
+
+# ADR-038: Source Table Complexity
+
+## Decision
+
+Source tables will be intentionally lean.
+
+Target:
+
+8–10 columns per source table
+
+Focus:
+
+Relationship Discovery
+
+not operational ERP realism.
