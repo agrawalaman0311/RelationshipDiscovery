@@ -551,3 +551,18 @@ Focus:
 Relationship Discovery
 
 not operational ERP realism.
+
+# ADR-039: Source Table Standard
+
+## Decision
+
+All source tables shall include:
+
+- Surrogate Identifier
+- LOAD_DTTM
+
+Primary key constraints are not required.
+
+## Status
+
+Approved
