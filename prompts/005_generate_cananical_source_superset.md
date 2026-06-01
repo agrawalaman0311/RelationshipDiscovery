@@ -88,7 +88,13 @@ The implementation must be idempotent.
 
 Repeated execution must produce identical results.
 
-CREATE TABLE IF NOT EXISTS is prohibited.
+INSERT statements are prohibited.
+
+The implementation must rebuild the entire table using a single:
+
+CREATE OR REPLACE TABLE AS SELECT
+
+statement.
 
 ---
 
@@ -113,27 +119,39 @@ RELATIONSHIP_DISCOVERY_DB.INTM.SOURCE_SUPERSET
 
 ## Required Columns
 
-* SOURCE_SUPERSET_ID NUMBER AUTOINCREMENT
+* SOURCE_SUPERSET_ID
 
-* SOURCE_SYSTEM VARCHAR(100)
+* SOURCE_SYSTEM
 
-* SOURCE_RECORD_ID VARCHAR(100)
+* SOURCE_RECORD_ID
 
-* BRAND VARCHAR(500)
+* BRAND
 
-* PRODUCT_NAME VARCHAR(1000)
+* PRODUCT_NAME
 
-* CATEGORY VARCHAR(500)
+* CATEGORY
 
-* MANUFACTURER VARCHAR(500)
+* MANUFACTURER
 
-* SALE_PRICE NUMBER(18,2)
+* SALE_PRICE
 
-* SIZE VARCHAR(200)
+* SIZE
 
-* LOAD_DTTM TIMESTAMP
+* LOAD_DTTM
 
-* CREATED_DTTM TIMESTAMP
+* CREATED_DTTM
+
+---
+
+## SOURCE_SUPERSET_ID Requirement
+
+Generate SOURCE_SUPERSET_ID using:
+
+ROW_NUMBER()
+
+Do NOT use AUTOINCREMENT.
+
+The implementation must work within a CREATE OR REPLACE TABLE AS SELECT pattern.
 
 ---
 
@@ -194,7 +212,7 @@ Populate SOURCE_SUPERSET from:
 
 Generate one row per source record.
 
-Expected total volume:
+Expected volume:
 
 Approximately 42,450 rows.
 
@@ -235,20 +253,54 @@ SOURCE_SUPERSET is a canonical landing layer only.
 
 ---
 
+## Implementation Pattern
+
+The final solution should follow this pattern:
+
+CREATE OR REPLACE TABLE ... AS
+
+SELECT ... FROM ERP_PRODUCT
+
+UNION ALL
+
+SELECT ... FROM SUPPLIER_PRODUCT
+
+UNION ALL
+
+SELECT ... FROM INVENTORY_PRODUCT
+
+UNION ALL
+
+SELECT ... FROM ECOMMERCE_PRODUCT
+
+The implementation must use a single table rebuild operation.
+
+---
+
 ## Output Requirements
 
 Output executable Snowflake SQL only.
 
 Include:
 
-* CREATE OR REPLACE TABLE statement
-* Population SQL
+* One CREATE OR REPLACE TABLE AS SELECT statement
 
 Do not include:
 
+* INSERT statements
 * Documentation
 * Explanations
 * Alternative Designs
+
+---
+
+## Validation Requirements
+
+Expected record count:
+
+Approximately 42,450 rows.
+
+Each source record must appear exactly once.
 
 ---
 
@@ -258,9 +310,7 @@ Execution must create and populate:
 
 RELATIONSHIP_DISCOVERY_DB.INTM.SOURCE_SUPERSET
 
-Expected record count:
-
-Approximately 42,450 rows.
+using a fully rebuildable, idempotent implementation.
 
 The next artifact will be:
 
