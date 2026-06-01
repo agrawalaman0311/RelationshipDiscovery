@@ -595,3 +595,16 @@ No FK enforcement required.
 ## Status
 
 Approved
+
+# ADR-042
+## Decision
+SOURCE_SUPERSET shall use a canonical expanded structure.
+
+EAV / key-value representation is rejected.
+
+## Reason
+Simpler DQ, Relationship Discovery, BR, and demo experience.
+
+## Status
+
+Approved
