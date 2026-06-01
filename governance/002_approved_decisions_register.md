@@ -583,3 +583,15 @@ ECOMMERCE_PRODUCT
 ## Status
 
 Approved
+
+# ADR-041
+## Decision
+Snowflake PK constraints are informational only.
+
+AUTOINCREMENT + PRIMARY KEY is acceptable for metadata tables.
+
+No FK enforcement required.
+
+## Status
+
+Approved
