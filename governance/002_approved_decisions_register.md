@@ -566,3 +566,20 @@ Primary key constraints are not required.
 ## Status
 
 Approved
+
+# ADR-040: Demo Data Volume
+
+## Decision
+
+10,000 rows per source system
+
+Applies to:
+
+ERP_PRODUCT
+SUPPLIER_PRODUCT
+INVENTORY_PRODUCT
+ECOMMERCE_PRODUCT
+
+## Status
+
+Approved
