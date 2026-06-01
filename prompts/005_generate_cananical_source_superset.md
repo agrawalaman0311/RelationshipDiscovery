@@ -8,9 +8,9 @@ SOURCE_SUPERSET is the canonical integration layer for the Relationship Discover
 
 SOURCE_SUPERSET shall use an expanded canonical structure.
 
-EAV (Entity Attribute Value) / Key-Value designs are prohibited.
+EAV (Entity Attribute Value) and Key-Value designs are prohibited.
 
-The table must provide a single standardized view of all source systems.
+The table must provide a standardized representation of all source systems.
 
 ---
 
@@ -76,29 +76,36 @@ INTM
 
 ---
 
+## Execution Strategy
+
+SOURCE_SUPERSET is an intermediate processing object.
+
+The implementation must use:
+
+CREATE OR REPLACE TABLE
+
+The implementation must be idempotent.
+
+Repeated execution must produce identical results.
+
+CREATE TABLE IF NOT EXISTS is prohibited.
+
+---
+
 ## Core Requirement
 
-SOURCE_SUPERSET must be canonical and expanded.
+SOURCE_SUPERSET shall use an expanded canonical structure.
 
 Do NOT generate:
 
-* Key-Value structures
-* EAV models
 * ATTRIBUTE_NAME columns
 * ATTRIBUTE_VALUE columns
-
-The resulting structure must be easy to consume by:
-
-* DQ Processing
-* Relationship Discovery
-* Business Rules
-* Golden Record Processing
+* EAV models
+* Key-Value models
 
 ---
 
 ## Table To Generate
-
-Create:
 
 RELATIONSHIP_DISCOVERY_DB.INTM.SOURCE_SUPERSET
 
@@ -127,18 +134,6 @@ RELATIONSHIP_DISCOVERY_DB.INTM.SOURCE_SUPERSET
 * LOAD_DTTM TIMESTAMP
 
 * CREATED_DTTM TIMESTAMP
-
----
-
-## Metadata Driven Requirement
-
-MD_ATTRIBUTE_MAPPING is the authoritative mapping source.
-
-Hardcoded mapping logic should be avoided wherever practical.
-
-The implementation must align with metadata definitions stored in:
-
-RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_MAPPING
 
 ---
 
@@ -190,29 +185,16 @@ SIZE
 
 ## Population Requirements
 
-Populate SOURCE_SUPERSET from all source systems.
+Populate SOURCE_SUPERSET from:
 
-Generate one SOURCE_SUPERSET record per source record.
+* ERP_PRODUCT
+* SUPPLIER_PRODUCT
+* INVENTORY_PRODUCT
+* ECOMMERCE_PRODUCT
 
-Expected volumes:
+Generate one row per source record.
 
-ERP_PRODUCT
-
-10,250 rows
-
-SUPPLIER_PRODUCT
-
-10,800 rows
-
-INVENTORY_PRODUCT
-
-10,450 rows
-
-ECOMMERCE_PRODUCT
-
-10,950 rows
-
-Expected total:
+Expected total volume:
 
 Approximately 42,450 rows.
 
@@ -238,37 +220,18 @@ SOURCE_RECORD_ID = ECOMMERCE_PRODUCT_ID
 
 ---
 
-## Data Quality Handling
+## Data Handling Rules
 
-Do not exclude records.
+Do not:
 
-Do not remove nulls.
+* Remove records
+* Filter records
+* Apply DQ rules
+* Apply survivorship
+* Standardize values
+* Discover relationships
 
-Do not standardize values.
-
-Do not apply survivorship.
-
-Do not perform matching.
-
-SOURCE_SUPERSET is a landing layer only.
-
----
-
-## Constraints
-
-Do NOT generate:
-
-* DQ Processing Logic
-* Relationship Discovery Logic
-* Relationship Catalog
-* Business Rules
-* DAL
-* Golden Record Logic
-* Tasks
-* Views
-* Reports
-
-Generate SOURCE_SUPERSET only.
+SOURCE_SUPERSET is a canonical landing layer only.
 
 ---
 
@@ -278,44 +241,27 @@ Output executable Snowflake SQL only.
 
 Include:
 
-* CREATE TABLE statement
+* CREATE OR REPLACE TABLE statement
 * Population SQL
 
 Do not include:
 
 * Documentation
-* Markdown
 * Explanations
 * Alternative Designs
 
 ---
 
-## Validation Requirements
-
-The final table must contain:
-
-* One row per source record
-* Standardized canonical column names
-* Records from all source systems
-* Traceability back to source systems
-
-The resulting dataset must support future:
-
-* DQ Processing
-* Relationship Discovery
-* Business Rules
-* Golden Record Processing
-
----
-
 ## Success Criteria
 
-Execution should create and populate:
+Execution must create and populate:
 
 RELATIONSHIP_DISCOVERY_DB.INTM.SOURCE_SUPERSET
 
-The resulting table should provide a canonical expanded representation of all source records.
+Expected record count:
+
+Approximately 42,450 rows.
 
 The next artifact will be:
 
-sql/procedures/006_dq_processing.sql
+sql/intm/006_dq_results.sql
