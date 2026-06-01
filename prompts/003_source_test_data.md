@@ -2,9 +2,11 @@
 
 ## Objective
 
-Generate Snowflake SQL to populate the approved source tables with synthetic data specifically designed to demonstrate the Relationship Discovery Framework.
+Generate executable Snowflake SQL to populate the approved source tables with synthetic data specifically designed to validate the Relationship Discovery Framework.
 
-The generated data must be relationship-centric, not source-centric.
+The generated dataset must be relationship-centric.
+
+The purpose of the dataset is to demonstrate T0, T1, T2 and T3 relationship discovery patterns as defined in governance/006_RELATIONSHIP_DISCOVERY_RULES.md.
 
 ---
 
@@ -14,7 +16,7 @@ sql/source/003_source_test_data.sql
 
 Generate the contents of this file.
 
-Do not generate any other files.
+Do not generate any additional files.
 
 ---
 
@@ -27,6 +29,7 @@ Read and comply with:
 * governance/003_PROMPT_OS.md
 * governance/004_PROJECT_CONTEXT.md
 * governance/005_METADATA_DESIGN.md
+* governance/006_RELATIONSHIP_DISCOVERY_RULES.md
 
 All approved decisions are mandatory.
 
@@ -55,21 +58,27 @@ Existing Tables:
 
 ## Core Requirement
 
-The generated data must support Relationship Discovery.
+The generated data must be relationship-centric.
 
 Do NOT generate four independent datasets.
 
-Generate a common logical product population first and derive all source systems from that population.
+Do NOT generate four independent PRODUCT_SEED populations.
+
+There shall be exactly one PRODUCT_SEED population.
+
+The PRODUCT_SEED population must be materialized once and reused by all source systems.
 
 ---
 
-## Relationship Population Strategy
+## Shared Product Population
 
-Create a shared logical product population.
-
-Example structure:
+Create:
 
 PRODUCT_SEED
+
+The PRODUCT_SEED population represents the enterprise product universe.
+
+Recommended attributes:
 
 * PRODUCT_SEED_ID
 * BRAND
@@ -77,14 +86,39 @@ PRODUCT_SEED
 * CATEGORY
 * MANUFACTURER
 * SIZE
+* BASE_PRICE
+* RELATIONSHIP_TYPE
 
-The PRODUCT_SEED population represents the enterprise product universe.
+PRODUCT_SEED must contain exactly:
 
-All source systems must be derived from PRODUCT_SEED.
+10,000 logical products.
 
 ---
 
-## Source Derivation Rules
+## Relationship Distribution
+
+Populate PRODUCT_SEED according to:
+
+| Relationship Type | Distribution |
+| ----------------- | ------------ |
+| T0                | 40%          |
+| T1                | 30%          |
+| T2                | 20%          |
+| T3                | 10%          |
+
+Relationship types must comply with:
+
+governance/006_RELATIONSHIP_DISCOVERY_RULES.md
+
+The distribution must be deterministic.
+
+Do not rely on random chance.
+
+---
+
+## Source Derivation Strategy
+
+All source systems must be generated from PRODUCT_SEED.
 
 ### ERP_PRODUCT
 
@@ -97,134 +131,119 @@ Characteristics:
 * Standardized Manufacturer
 * Standardized Size
 
-Highest quality source.
+ERP is the highest quality source.
 
 ---
 
 ### SUPPLIER_PRODUCT
 
-Generate records from PRODUCT_SEED.
+Derive from PRODUCT_SEED.
 
-Apply:
+Apply transformations based on RELATIONSHIP_TYPE.
 
-* Brand prefixes
-* Manufacturer abbreviations
-* Alternative size formatting
-* Supplier naming conventions
+Examples:
+
+T0
+
+Exact values
+
+T1
+
+Prefix/Suffix variations
+
+Examples:
+
+* Premium Acme Widget
+* Acme Widget 500ML
+
+T2
+
+Abbreviations
+
+Examples:
+
+* ACM
+* NEX
+
+T3
+
+Intentional mismatch values
 
 ---
 
 ### INVENTORY_PRODUCT
 
-Generate records from PRODUCT_SEED.
+Derive from PRODUCT_SEED.
 
 Apply:
 
 * Brand codes
 * Abbreviated product names
 * Condensed size formats
-* Warehouse categories
+
+according to RELATIONSHIP_TYPE.
 
 ---
 
 ### ECOMMERCE_PRODUCT
 
-Generate records from PRODUCT_SEED.
+Derive from PRODUCT_SEED.
 
 Apply:
 
-* SEO product titles
-* Marketing-friendly brand names
+* SEO titles
+* Marketing names
 * Verbose size descriptions
-* Customer-facing naming conventions
+
+according to RELATIONSHIP_TYPE.
 
 ---
 
-## Data Volume Requirements
+## Source Volumes
 
-Generate between 10,000 and 11,000 rows per source.
+Generate:
 
-Approved targets:
+ERP_PRODUCT
 
-* ERP_PRODUCT = 10,250
-* SUPPLIER_PRODUCT = 10,800
-* INVENTORY_PRODUCT = 10,450
-* ECOMMERCE_PRODUCT = 10,950
+10,250 rows
 
-Requirements:
+SUPPLIER_PRODUCT
 
-* Minimum 10,000 rows per source
-* Maximum 11,000 rows per source
+10,800 rows
+
+INVENTORY_PRODUCT
+
+10,450 rows
+
+ECOMMERCE_PRODUCT
+
+10,950 rows
 
 ---
 
-## Relationship Distribution Requirements
+## Additional Source Records
 
-The PRODUCT_SEED population must intentionally produce:
-
-### Direct Match Relationships
-
-40%
+After generating records derived from PRODUCT_SEED, generate source-specific records to achieve target row counts.
 
 Examples:
 
-* Exact Brand Match
-* Exact Product Name Match
-* Exact Size Match
+ERP-only products
 
----
+Supplier-only products
 
-### Prefix/Suffix Relationships
+Inventory-only products
 
-30%
+Ecommerce-only products
 
-Examples:
+These records must not belong to PRODUCT_SEED.
 
-ERP:
-Acme Widget
+Purpose:
 
-Supplier:
-Premium Acme Widget 500ML
+Demonstrate:
 
----
-
-### Left-N Relationships
-
-20%
-
-Examples:
-
-ERP:
-ACME
-
-Inventory:
-ACM
-
-ERP:
-NEXUS
-
-Inventory:
-NEX
-
----
-
-### Rejected Candidates
-
-10%
-
-Examples:
-
-* Similar names
-* Different brands
-* Similar categories
-* Similar prices
-* Similar manufacturers
-
-These records must intentionally fail matching.
-
-Relationships must be intentionally created.
-
-Do not rely on randomness.
+* Orphan Records
+* Unmatched Records
+* Source-Specific Records
 
 ---
 
@@ -234,13 +253,7 @@ Intentionally generate:
 
 ### Missing Values
 
-Only for non-critical attributes.
-
-### Formatting Variations
-
-* Manufacturer
-* Product Name
-* Size
+For non-critical attributes only.
 
 ### Case Variations
 
@@ -257,11 +270,19 @@ Examples:
 * Procter & Gamble
 * P&G
 
+### Formatting Variations
+
+Examples:
+
+* 500ML
+* 500 ML
+* 0.5L
+
 ---
 
 ## Data Generation Requirements
 
-Use Snowflake-native generation techniques.
+Use Snowflake-native generation.
 
 Preferred:
 
@@ -282,8 +303,9 @@ Generate scalable SQL.
 
 * No duplicate source identifiers
 * Valid LOAD_DTTM values
-* Reproducible generation logic
-* Consistent derivation from PRODUCT_SEED
+* One shared PRODUCT_SEED population
+* All relationship records derived from PRODUCT_SEED
+* Source-specific records generated separately
 
 ---
 
@@ -291,13 +313,13 @@ Generate scalable SQL.
 
 Do NOT generate:
 
-* Metadata tables
+* Metadata Tables
 * SOURCE_SUPERSET
-* DQ logic
-* Relationship Discovery procedures
-* Relationship Catalog tables
-* BR modules
-* DAL modules
+* DQ Logic
+* Relationship Discovery Procedures
+* Relationship Catalog Tables
+* BR Modules
+* DAL Modules
 * Tasks
 * Views
 * Reports
@@ -322,15 +344,12 @@ Do not include:
 
 ## Validation Requirements
 
-The generated data must allow a future Relationship Discovery process to identify:
+The generated dataset must allow a future Relationship Discovery process to identify:
 
-* Direct Matches
-* Prefix/Suffix Matches
-* Left-N Matches
-
-using the generated source data.
-
-Rejected candidates must also be present.
+* T0 Exact Match relationships
+* T1 Prefix/Suffix relationships
+* T2 Left-N relationships
+* T3 Rejected candidates
 
 The same logical product must be traceable across multiple source systems.
 
@@ -338,7 +357,7 @@ The same logical product must be traceable across multiple source systems.
 
 ## Success Criteria
 
-Execution of the generated SQL should populate all four source tables with relationship-centric test data suitable for demonstrating the Relationship Discovery Framework.
+Execution of the generated SQL should create a relationship-centric dataset suitable for demonstrating the Relationship Discovery Framework.
 
 The next artifact will be:
 
