@@ -608,3 +608,46 @@ Simpler DQ, Relationship Discovery, BR, and demo experience.
 ## Status
 
 Approved
+
+# ADR-043
+
+Intermediate Layer Refresh Strategy
+
+## Decision:
+
+All INTM objects shall be recreated using:
+
+CREATE OR REPLACE TABLE
+
+## Reason:
+
+- Idempotent execution
+- No duplicate data
+- Faster development
+- Easier debugging
+- Repeatable demos
+
+Applies To:
+
+INTM.SOURCE_SUPERSET
+INTM.DQ_RESULTS
+INTM.DQ_RECORD_SUMMARY
+INTM.RELATIONSHIP_CANDIDATES
+INTM.RELATIONSHIP_CATALOG
+INTM.BR_OUTPUT
+INTM.GOLDEN_PRODUCT
+
+Exception:
+
+SRC.*
+MD.*
+LOG.*
+RPT.*
+
+remain persistent and shall use:
+
+CREATE TABLE IF NOT EXISTS
+
+## Status
+
+Approved
