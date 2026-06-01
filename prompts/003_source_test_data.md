@@ -1,8 +1,10 @@
-# PROMPT 003 – GENERATE SOURCE TEST DATA
+# PROMPT 003 – GENERATE RELATIONSHIP-CENTRIC SOURCE TEST DATA
 
 ## Objective
 
-Generate Snowflake SQL to populate the approved source tables with synthetic data required to demonstrate the Relationship Discovery Framework.
+Generate Snowflake SQL to populate the approved source tables with synthetic data specifically designed to demonstrate the Relationship Discovery Framework.
+
+The generated data must be relationship-centric, not source-centric.
 
 ---
 
@@ -51,180 +53,178 @@ Existing Tables:
 
 ---
 
-## Task
+## Core Requirement
 
-Generate executable Snowflake SQL to populate:
+The generated data must support Relationship Discovery.
 
-* RELATIONSHIP_DISCOVERY_DB.SRC.ERP_PRODUCT
-* RELATIONSHIP_DISCOVERY_DB.SRC.SUPPLIER_PRODUCT
-* RELATIONSHIP_DISCOVERY_DB.SRC.INVENTORY_PRODUCT
-* RELATIONSHIP_DISCOVERY_DB.SRC.ECOMMERCE_PRODUCT
+Do NOT generate four independent datasets.
 
-with synthetic test data.
+Generate a common logical product population first and derive all source systems from that population.
 
 ---
 
-## Data Volume Requirements
+## Relationship Population Strategy
 
-Generate between 10,000 and 11,000 rows for each source table.
+Create a shared logical product population.
 
-Approved target volumes:
+Example structure:
 
-* ERP_PRODUCT: 10,250 rows
-* SUPPLIER_PRODUCT: 10,800 rows
-* INVENTORY_PRODUCT: 10,450 rows
-* ECOMMERCE_PRODUCT: 10,950 rows
+PRODUCT_SEED
 
-Requirements:
-
-* Minimum 10,000 rows per source
-* Maximum 11,000 rows per source
-* No source may fall outside the approved range
-
----
-
-## Data Generation Requirements
-
-Use Snowflake-native generation techniques.
-
-Preferred techniques:
-
-* TABLE(GENERATOR())
-* SEQ4()
-* RANDOM()
-* UNIFORM()
-* ARRAY_CONSTRUCT()
-* CASE expressions
-
-Do NOT generate thousands of hardcoded INSERT statements.
-
-Generate scalable SQL.
-
----
-
-## Canonical Attribute Coverage
-
-Generated data must support the approved canonical attributes:
-
+* PRODUCT_SEED_ID
 * BRAND
 * PRODUCT_NAME
 * CATEGORY
 * MANUFACTURER
-* SALE_PRICE
 * SIZE
 
----
+The PRODUCT_SEED population represents the enterprise product universe.
 
-## Relationship Discovery Test Coverage
-
-The generated data must intentionally create relationship discovery opportunities.
-
-### T0 Direct Match
-
-Target distribution:
-
-40%
-
-Examples:
-
-* Exact Brand Matches
-* Exact Product Name Matches
-* Exact Size Matches
+All source systems must be derived from PRODUCT_SEED.
 
 ---
 
-### T1 Prefix/Suffix Match
-
-Target distribution:
-
-30%
-
-Examples:
-
-* Acme Widget
-* Acme Widget 500ML
-* Premium Acme Widget
-* Acme Widget Large
-
----
-
-### T2 Left-N Character Match
-
-Target distribution:
-
-20%
-
-Examples:
-
-* ACM
-* ACME
-* ACME_CORP
-
----
-
-### Rejected Candidates
-
-Target distribution:
-
-10%
-
-Examples:
-
-* Similar product names
-* Different brands
-* Similar categories
-* Similar prices
-* Similar manufacturers
-
-These records must intentionally fail relationship matching.
-
----
-
-## Source-Specific Characteristics
+## Source Derivation Rules
 
 ### ERP_PRODUCT
 
-Generate:
+Generate the cleanest representation.
 
-* Clean brand names
-* Standard product names
-* Standardized sizes
-* Standardized manufacturers
+Characteristics:
 
-This should be the highest quality source.
+* Standardized Brand
+* Standardized Product Name
+* Standardized Manufacturer
+* Standardized Size
+
+Highest quality source.
 
 ---
 
 ### SUPPLIER_PRODUCT
 
-Generate:
+Generate records from PRODUCT_SEED.
+
+Apply:
 
 * Brand prefixes
 * Manufacturer abbreviations
 * Alternative size formatting
-* Supplier-specific naming conventions
+* Supplier naming conventions
 
 ---
 
 ### INVENTORY_PRODUCT
 
-Generate:
+Generate records from PRODUCT_SEED.
+
+Apply:
 
 * Brand codes
 * Abbreviated product names
-* Warehouse-oriented categories
-* Condensed size values
+* Condensed size formats
+* Warehouse categories
 
 ---
 
 ### ECOMMERCE_PRODUCT
 
-Generate:
+Generate records from PRODUCT_SEED.
 
-* SEO-optimized product titles
+Apply:
+
+* SEO product titles
 * Marketing-friendly brand names
 * Verbose size descriptions
-* Customer-facing product descriptions
+* Customer-facing naming conventions
+
+---
+
+## Data Volume Requirements
+
+Generate between 10,000 and 11,000 rows per source.
+
+Approved targets:
+
+* ERP_PRODUCT = 10,250
+* SUPPLIER_PRODUCT = 10,800
+* INVENTORY_PRODUCT = 10,450
+* ECOMMERCE_PRODUCT = 10,950
+
+Requirements:
+
+* Minimum 10,000 rows per source
+* Maximum 11,000 rows per source
+
+---
+
+## Relationship Distribution Requirements
+
+The PRODUCT_SEED population must intentionally produce:
+
+### Direct Match Relationships
+
+40%
+
+Examples:
+
+* Exact Brand Match
+* Exact Product Name Match
+* Exact Size Match
+
+---
+
+### Prefix/Suffix Relationships
+
+30%
+
+Examples:
+
+ERP:
+Acme Widget
+
+Supplier:
+Premium Acme Widget 500ML
+
+---
+
+### Left-N Relationships
+
+20%
+
+Examples:
+
+ERP:
+ACME
+
+Inventory:
+ACM
+
+ERP:
+NEXUS
+
+Inventory:
+NEX
+
+---
+
+### Rejected Candidates
+
+10%
+
+Examples:
+
+* Similar names
+* Different brands
+* Similar categories
+* Similar prices
+* Similar manufacturers
+
+These records must intentionally fail matching.
+
+Relationships must be intentionally created.
+
+Do not rely on randomness.
 
 ---
 
@@ -234,15 +234,13 @@ Intentionally generate:
 
 ### Missing Values
 
-For selected non-critical attributes.
+Only for non-critical attributes.
 
 ### Formatting Variations
 
-For:
-
-* Size
 * Manufacturer
 * Product Name
+* Size
 
 ### Case Variations
 
@@ -261,13 +259,31 @@ Examples:
 
 ---
 
+## Data Generation Requirements
+
+Use Snowflake-native generation techniques.
+
+Preferred:
+
+* TABLE(GENERATOR())
+* SEQ4()
+* RANDOM()
+* UNIFORM()
+* ARRAY_CONSTRUCT()
+* CASE
+
+Do not generate thousands of hardcoded INSERT statements.
+
+Generate scalable SQL.
+
+---
+
 ## Data Integrity Requirements
 
 * No duplicate source identifiers
-* Every row must have a valid source identifier
-* Every table must contain valid LOAD_DTTM values
-* Data must be reproducible
-* Data must be suitable for relationship discovery testing
+* Valid LOAD_DTTM values
+* Reproducible generation logic
+* Consistent derivation from PRODUCT_SEED
 
 ---
 
@@ -297,21 +313,32 @@ Output executable Snowflake SQL only.
 Do not include:
 
 * Markdown
-* Explanations
 * Documentation
+* Explanations
 * Design Notes
 * Alternative Approaches
 
 ---
 
+## Validation Requirements
+
+The generated data must allow a future Relationship Discovery process to identify:
+
+* Direct Matches
+* Prefix/Suffix Matches
+* Left-N Matches
+
+using the generated source data.
+
+Rejected candidates must also be present.
+
+The same logical product must be traceable across multiple source systems.
+
+---
+
 ## Success Criteria
 
-Execution of the generated SQL should populate all four source tables with realistic test data supporting:
-
-* Direct Match Discovery
-* Prefix/Suffix Discovery
-* Left-N Discovery
-* Rejected Candidate Validation
+Execution of the generated SQL should populate all four source tables with relationship-centric test data suitable for demonstrating the Relationship Discovery Framework.
 
 The next artifact will be:
 
