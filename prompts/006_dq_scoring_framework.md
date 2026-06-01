@@ -80,9 +80,15 @@ CREATE OR REPLACE TABLE
 
 The implementation must be idempotent.
 
-Repeated execution must produce identical record counts.
+Repeated execution must produce identical results.
 
-CREATE TABLE IF NOT EXISTS is prohibited.
+INSERT statements are prohibited.
+
+The implementation must rebuild the tables using:
+
+CREATE OR REPLACE TABLE AS SELECT
+
+patterns.
 
 ---
 
@@ -91,6 +97,10 @@ CREATE TABLE IF NOT EXISTS is prohibited.
 DQ evaluation must be metadata-driven.
 
 MD_ATTRIBUTE_DQ_RULES is the authoritative source of DQ rules.
+
+The implementation must use metadata from:
+
+RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_DQ_RULES
 
 ---
 
@@ -102,15 +112,15 @@ RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RESULTS
 
 ## Required Columns
 
-* DQ_RESULT_ID NUMBER AUTOINCREMENT
-* SOURCE_SYSTEM VARCHAR(100)
-* SOURCE_RECORD_ID VARCHAR(100)
-* ATTRIBUTE_NAME VARCHAR(100)
-* ATTRIBUTE_VALUE VARCHAR(5000)
-* DQ_STATUS VARCHAR(20)
-* DQ_SCORE NUMBER(5,2)
-* DQ_MESSAGE VARCHAR(500)
-* CREATED_DTTM TIMESTAMP
+* DQ_RESULT_ID
+* SOURCE_SYSTEM
+* SOURCE_RECORD_ID
+* ATTRIBUTE_NAME
+* ATTRIBUTE_VALUE
+* DQ_STATUS
+* DQ_SCORE
+* DQ_MESSAGE
+* CREATED_DTTM
 
 ---
 
@@ -127,7 +137,7 @@ RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RESULTS
 
 ## Scoring Rules
 
-Critical Attribute
+### Critical Attribute
 
 If populated:
 
@@ -139,7 +149,7 @@ DQ_SCORE = 0
 
 ---
 
-Non-Critical Attribute
+### Non-Critical Attribute
 
 If populated:
 
@@ -173,6 +183,8 @@ FAIL
 
 Critical attribute missing.
 
+Required value is null.
+
 ---
 
 ## Population Requirements
@@ -186,6 +198,34 @@ Expected volume:
 Approximately 254,700 rows.
 
 (42,450 × 6)
+
+---
+
+## DQ_RESULT_ID Requirement
+
+Generate DQ_RESULT_ID using:
+
+ROW_NUMBER()
+
+Do NOT use AUTOINCREMENT.
+
+The implementation must work inside:
+
+CREATE OR REPLACE TABLE AS SELECT
+
+---
+
+## Attribute Extraction Requirement
+
+Because SOURCE_SUPERSET uses an expanded structure, attribute extraction may use CASE logic.
+
+This is acceptable.
+
+However:
+
+DQ rule evaluation must come from MD_ATTRIBUTE_DQ_RULES.
+
+Hardcoded DQ rule definitions are prohibited.
 
 ---
 
@@ -210,7 +250,29 @@ RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RECORD_SUMMARY
 
 ## Record Score Calculation
 
-Average all attribute-level DQ scores for the record.
+Calculate:
+
+Average of all attribute-level DQ scores.
+
+Example:
+
+BRAND = 100
+
+PRODUCT_NAME = 100
+
+CATEGORY = 50
+
+MANUFACTURER = 100
+
+SALE_PRICE = 100
+
+SIZE = 0
+
+Record Score:
+
+450 / 6
+
+= 75
 
 ---
 
@@ -230,20 +292,24 @@ RECORD_DQ_SCORE < 60
 
 ---
 
-## Output Requirements
+## Implementation Pattern
 
-Output executable Snowflake SQL only.
+Table 1:
 
-Include:
+CREATE OR REPLACE TABLE INTM.DQ_RESULTS AS
+SELECT ...
 
-* CREATE OR REPLACE TABLE statements
-* Population SQL
+Table 2:
 
-Do not include:
+CREATE OR REPLACE TABLE INTM.DQ_RECORD_SUMMARY AS
+SELECT ...
+FROM INTM.DQ_RESULTS
 
-* Documentation
-* Explanations
-* Alternative Designs
+No INSERT statements.
+
+No TRUNCATE statements.
+
+The implementation must fully rebuild both tables.
 
 ---
 
@@ -259,20 +325,47 @@ Do NOT generate:
 * Views
 * Reports
 
+Generate DQ processing only.
+
+---
+
+## Output Requirements
+
+Output executable Snowflake SQL only.
+
+Include:
+
+* CREATE OR REPLACE TABLE AS SELECT statements
+
+Do not include:
+
+* INSERT statements
+* Documentation
+* Explanations
+* Alternative Designs
+
+---
+
+## Validation Requirements
+
+Expected volumes:
+
+DQ_RESULTS ≈ 254,700 rows
+
+DQ_RECORD_SUMMARY ≈ 42,450 rows
+
+The implementation must be fully rerunnable without producing duplicate records.
+
 ---
 
 ## Success Criteria
 
 Execution must create and populate:
 
-* INTM.DQ_RESULTS
-* INTM.DQ_RECORD_SUMMARY
+* RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RESULTS
+* RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RECORD_SUMMARY
 
-Expected volumes:
-
-DQ_RESULTS ≈ 254,700
-
-DQ_RECORD_SUMMARY ≈ 42,450
+using a fully rebuildable and idempotent implementation.
 
 The next artifact will be:
 
