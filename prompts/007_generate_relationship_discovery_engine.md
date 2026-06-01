@@ -122,27 +122,75 @@ RELATIONSHIP_DISCOVERY_DB.INTM.RELATIONSHIP_CANDIDATES
 
 ---
 
-## Relationship Types
+## Performance Requirement
 
-Implement the approved relationship definitions.
+Cross joining SOURCE_SUPERSET is prohibited.
 
-### T0
+Unrestricted SOURCE_SUPERSET self-joins are prohibited.
 
-Exact Match
+The implementation must use blocking to reduce candidate volume before relationship evaluation.
 
-Definition:
+Blocking must occur in the JOIN condition.
 
-BRAND matches exactly
+Approved blocking keys:
 
-AND
+* LEFT(UPPER(BRAND),3)
+* LEFT(UPPER(PRODUCT_NAME),3)
 
-PRODUCT_NAME matches exactly
+The implementation must only compare records that share at least one blocking key.
 
 ---
 
-### T1
+## Source Pairing Rules
 
-Prefix / Suffix Match
+Relationships must only be discovered across different source systems.
+
+Allowed:
+
+* ERP_PRODUCT ↔ SUPPLIER_PRODUCT
+* ERP_PRODUCT ↔ INVENTORY_PRODUCT
+* ERP_PRODUCT ↔ ECOMMERCE_PRODUCT
+* SUPPLIER_PRODUCT ↔ INVENTORY_PRODUCT
+* SUPPLIER_PRODUCT ↔ ECOMMERCE_PRODUCT
+* INVENTORY_PRODUCT ↔ ECOMMERCE_PRODUCT
+
+Prohibited:
+
+* ERP_PRODUCT ↔ ERP_PRODUCT
+* SUPPLIER_PRODUCT ↔ SUPPLIER_PRODUCT
+* INVENTORY_PRODUCT ↔ INVENTORY_PRODUCT
+* ECOMMERCE_PRODUCT ↔ ECOMMERCE_PRODUCT
+
+Duplicate reverse relationships are prohibited.
+
+The implementation must ensure:
+
+```sql
+L.SOURCE_SYSTEM < R.SOURCE_SYSTEM
+```
+
+or equivalent logic.
+
+---
+
+## Relationship Types
+
+### T0 – Exact Match
+
+Definition:
+
+* BRAND matches exactly
+  AND
+* PRODUCT_NAME matches exactly
+
+Score:
+
+* MATCH_SCORE = 100
+* MATCH_CONFIDENCE = HIGH
+
+---
+
+### T1 – Partial Match
 
 Definition:
 
@@ -152,11 +200,14 @@ OR
 
 One BRAND contains the other
 
+Score:
+
+* MATCH_SCORE = 85
+* MATCH_CONFIDENCE = MEDIUM
+
 ---
 
-### T2
-
-Left-N Match
+### T2 – Prefix Match
 
 Definition:
 
@@ -166,113 +217,43 @@ OR
 
 LEFT(PRODUCT_NAME,3) matches
 
----
+Score:
 
-### T3
-
-Rejected Candidate
-
-Definition:
-
-Potential candidate exists
-
-But does not satisfy T0, T1 or T2.
+* MATCH_SCORE = 70
+* MATCH_CONFIDENCE = LOW
 
 ---
 
-## Source Pairing Rules
+### T3 – Rejected
 
-Relationships must be discovered only across different source systems.
+Do not store T3 rows.
 
-Allowed:
-
-ERP_PRODUCT ↔ SUPPLIER_PRODUCT
-
-ERP_PRODUCT ↔ INVENTORY_PRODUCT
-
-ERP_PRODUCT ↔ ECOMMERCE_PRODUCT
-
-SUPPLIER_PRODUCT ↔ INVENTORY_PRODUCT
-
-SUPPLIER_PRODUCT ↔ ECOMMERCE_PRODUCT
-
-INVENTORY_PRODUCT ↔ ECOMMERCE_PRODUCT
-
-Prohibited:
-
-ERP_PRODUCT ↔ ERP_PRODUCT
-
-SUPPLIER_PRODUCT ↔ SUPPLIER_PRODUCT
-
-etc.
+Only T0, T1 and T2 relationships should be persisted.
 
 ---
 
-## Candidate Generation Scope
+## DQ Integration
 
 Use:
 
-SOURCE_SUPERSET
+RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RECORD_SUMMARY
 
-as the canonical source.
+to obtain:
 
-Use:
+RECORD_DQ_SCORE
 
-DQ_RECORD_SUMMARY
-
-to obtain record quality scores.
-
----
-
-## Match Scoring Rules
-
-T0
-
-MATCH_SCORE = 100
-
-MATCH_CONFIDENCE = HIGH
-
----
-
-T1
-
-MATCH_SCORE = 85
-
-MATCH_CONFIDENCE = MEDIUM
-
----
-
-T2
-
-MATCH_SCORE = 70
-
-MATCH_CONFIDENCE = LOW
-
----
-
-T3
-
-MATCH_SCORE = 0
-
-MATCH_CONFIDENCE = REJECTED
-
----
-
-## DQ Weighted Score
+for both records.
 
 Calculate:
 
-Average of:
-
-LEFT_RECORD_DQ_SCORE
-
-and
-
-RIGHT_RECORD_DQ_SCORE
-
-Store as:
-
+```text
 DQ_WEIGHTED_SCORE
+=
+Average(
+LEFT_RECORD_DQ_SCORE,
+RIGHT_RECORD_DQ_SCORE
+)
+```
 
 ---
 
@@ -290,19 +271,29 @@ Do not use AUTOINCREMENT.
 
 ---
 
-## Deduplication Rules
+## Snowflake Compatibility Requirements
 
-A relationship pair may only appear once.
+Use:
 
-Allowed:
+```sql
+LENGTH()
+```
 
-ERP_PRODUCT 1 ↔ SUPPLIER_PRODUCT 10
+Do NOT use:
 
-Prohibited:
+```sql
+LEN()
+```
 
-SUPPLIER_PRODUCT 10 ↔ ERP_PRODUCT 1
+The generated SQL must be Snowflake compatible.
 
-Duplicate reverse relationships are not allowed.
+---
+
+## Candidate Volume Requirement
+
+The blocking strategy must significantly reduce comparison volume.
+
+The implementation must not attempt a full pairwise comparison of all SOURCE_SUPERSET records.
 
 ---
 
@@ -328,7 +319,7 @@ Output executable Snowflake SQL only.
 
 Include:
 
-* CREATE OR REPLACE TABLE AS SELECT statement
+* One CREATE OR REPLACE TABLE AS SELECT statement
 
 Do not include:
 
@@ -339,30 +330,19 @@ Do not include:
 
 ---
 
-## Validation Requirements
-
-Output must contain:
-
-* T0 relationships
-* T1 relationships
-* T2 relationships
-
-Each relationship must include:
-
-* Match Type
-* Match Score
-* Match Confidence
-* DQ Weighted Score
-
----
-
 ## Success Criteria
 
 Execution must create and populate:
 
 RELATIONSHIP_DISCOVERY_DB.INTM.RELATIONSHIP_CANDIDATES
 
-The resulting table must provide relationship candidates suitable for downstream relationship catalog processing.
+The implementation must:
+
+* Use blocking
+* Avoid candidate explosion
+* Generate T0/T1/T2 relationships
+* Include DQ-weighted confidence scoring
+* Be fully rerunnable
 
 The next artifact will be:
 
