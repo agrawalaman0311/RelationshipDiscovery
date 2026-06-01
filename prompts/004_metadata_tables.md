@@ -6,10 +6,12 @@ Generate executable Snowflake SQL required to create and populate the approved m
 
 These metadata tables will drive:
 
-- Data Quality Validation
-- Survivorship Rules
-- Future Business Rules
-- Relationship Discovery
+* Data Quality Validation
+* Attribute Standardization
+* Source-to-Canonical Mapping
+* Survivorship Rules
+* Relationship Discovery
+* Future Business Rules
 
 ---
 
@@ -27,12 +29,12 @@ Do not generate any additional files.
 
 Read and comply with:
 
-- governance/001_MASTER_CONSTITUTION.md
-- governance/002_APPROVED_DECISIONS_REGISTER.md
-- governance/003_PROMPT_OS.md
-- governance/004_PROJECT_CONTEXT.md
-- governance/005_METADATA_DESIGN.md
-- governance/006_RELATIONSHIP_DISCOVERY_RULES.md
+* governance/001_MASTER_CONSTITUTION.md
+* governance/002_APPROVED_DECISIONS_REGISTER.md
+* governance/003_PROMPT_OS.md
+* governance/004_PROJECT_CONTEXT.md
+* governance/005_METADATA_DESIGN.md
+* governance/006_RELATIONSHIP_DISCOVERY_RULES.md
 
 All approved decisions are mandatory.
 
@@ -54,126 +56,249 @@ MD
 
 ## Tables To Generate
 
+Generate and populate:
+
 1. MD_ATTRIBUTE_DQ_RULES
-
-Purpose:
-Store attribute-level data quality rules.
-
 2. MD_ATTRIBUTE_SURVIVORSHIP
-
-Purpose:
-Store source priority and survivorship logic.
+3. MD_ATTRIBUTE_MAPPING
 
 ---
 
-## Generate Table: MD_ATTRIBUTE_DQ_RULES
+## Table 1: MD_ATTRIBUTE_DQ_RULES
+
+Purpose:
+
+Store attribute-level Data Quality requirements.
 
 Required Columns:
 
-- ATTRIBUTE_NAME
-- IS_CRITICAL
-- NULL_ALLOWED
-- DQ_RULE_TYPE
-- DQ_RULE_DESCRIPTION
-- ACTIVE_FLAG
-- CREATED_DTTM
+* DQ_RULE_ID NUMBER AUTOINCREMENT
+* ATTRIBUTE_NAME VARCHAR(100)
+* IS_CRITICAL VARCHAR(1)
+* NULL_ALLOWED VARCHAR(1)
+* DQ_RULE_TYPE VARCHAR(50)
+* DQ_RULE_DESCRIPTION VARCHAR(500)
+* ACTIVE_FLAG VARCHAR(1)
+* CREATED_DTTM TIMESTAMP
 
-Generate seed metadata records for:
+---
 
-- BRAND
-- PRODUCT_NAME
-- CATEGORY
-- MANUFACTURER
-- SALE_PRICE
-- SIZE
+### Seed Data
+
+Generate metadata for:
+
+* BRAND
+* PRODUCT_NAME
+* CATEGORY
+* MANUFACTURER
+* SALE_PRICE
+* SIZE
 
 Approved Critical Attributes:
 
-- BRAND
-- PRODUCT_NAME
-- SIZE
+* BRAND
+* PRODUCT_NAME
+* SIZE
 
-Approved DQ Rules:
+Approved Rules:
 
 BRAND
-- IS_CRITICAL = Y
-- NULL_ALLOWED = N
-- DQ_RULE_TYPE = NOT_NULL
+
+* IS_CRITICAL = Y
+* NULL_ALLOWED = N
+* DQ_RULE_TYPE = NOT_NULL
 
 PRODUCT_NAME
-- IS_CRITICAL = Y
-- NULL_ALLOWED = N
-- DQ_RULE_TYPE = NOT_NULL
+
+* IS_CRITICAL = Y
+* NULL_ALLOWED = N
+* DQ_RULE_TYPE = NOT_NULL
 
 SIZE
-- IS_CRITICAL = Y
-- NULL_ALLOWED = N
-- DQ_RULE_TYPE = NOT_NULL
+
+* IS_CRITICAL = Y
+* NULL_ALLOWED = N
+* DQ_RULE_TYPE = NOT_NULL
 
 CATEGORY
-- IS_CRITICAL = N
-- NULL_ALLOWED = Y
+
+* IS_CRITICAL = N
+* NULL_ALLOWED = Y
 
 MANUFACTURER
-- IS_CRITICAL = N
-- NULL_ALLOWED = Y
+
+* IS_CRITICAL = N
+* NULL_ALLOWED = Y
 
 SALE_PRICE
-- IS_CRITICAL = N
-- NULL_ALLOWED = Y
+
+* IS_CRITICAL = N
+* NULL_ALLOWED = Y
 
 ---
 
-## Generate Table: MD_ATTRIBUTE_SURVIVORSHIP
+## Table 2: MD_ATTRIBUTE_SURVIVORSHIP
+
+Purpose:
+
+Store source priority rules.
 
 Required Columns:
 
-- ATTRIBUTE_NAME
-- SOURCE_SYSTEM
-- PRIORITY_ORDER
-- ACTIVE_FLAG
-- CREATED_DTTM
+* SURVIVORSHIP_RULE_ID NUMBER AUTOINCREMENT
+* ATTRIBUTE_NAME VARCHAR(100)
+* SOURCE_SYSTEM VARCHAR(100)
+* PRIORITY_ORDER NUMBER
+* ACTIVE_FLAG VARCHAR(1)
+* CREATED_DTTM TIMESTAMP
 
-Generate survivorship metadata for:
+---
 
-- BRAND
-- PRODUCT_NAME
-- CATEGORY
-- MANUFACTURER
-- SALE_PRICE
-- SIZE
+### Approved Source Priority
 
-Approved Source Priority:
+Priority 1
 
-1 = ERP_PRODUCT
+ERP_PRODUCT
 
-2 = SUPPLIER_PRODUCT
+Priority 2
 
-3 = ECOMMERCE_PRODUCT
+SUPPLIER_PRODUCT
 
-4 = INVENTORY_PRODUCT
+Priority 3
 
-Generate survivorship records for every attribute/source combination.
+ECOMMERCE_PRODUCT
 
-Example:
+Priority 4
 
-ATTRIBUTE_NAME = BRAND
-SOURCE_SYSTEM = ERP_PRODUCT
-PRIORITY_ORDER = 1
+INVENTORY_PRODUCT
 
-ATTRIBUTE_NAME = BRAND
-SOURCE_SYSTEM = SUPPLIER_PRODUCT
-PRIORITY_ORDER = 2
+---
 
-ATTRIBUTE_NAME = BRAND
-SOURCE_SYSTEM = ECOMMERCE_PRODUCT
-PRIORITY_ORDER = 3
+### Seed Data
 
-ATTRIBUTE_NAME = BRAND
-SOURCE_SYSTEM = INVENTORY_PRODUCT
-PRIORITY_ORDER = 4
+Generate survivorship records for:
 
-Repeat for all approved attributes.
+* BRAND
+* PRODUCT_NAME
+* CATEGORY
+* MANUFACTURER
+* SALE_PRICE
+* SIZE
+
+Generate one record per:
+
+ATTRIBUTE × SOURCE_SYSTEM
+
+combination.
+
+---
+
+## Table 3: MD_ATTRIBUTE_MAPPING
+
+Purpose:
+
+Store source-to-canonical attribute mappings.
+
+This metadata will be used by:
+
+* SOURCE_SUPERSET
+* DQ Processing
+* Relationship Discovery
+* Business Rules
+
+Required Columns:
+
+* MAPPING_ID NUMBER AUTOINCREMENT
+* CANONICAL_ATTRIBUTE VARCHAR(100)
+* SOURCE_SYSTEM VARCHAR(100)
+* SOURCE_ATTRIBUTE VARCHAR(100)
+* ACTIVE_FLAG VARCHAR(1)
+* CREATED_DTTM TIMESTAMP
+
+---
+
+### Approved Canonical Attributes
+
+* BRAND
+* PRODUCT_NAME
+* CATEGORY
+* MANUFACTURER
+* SALE_PRICE
+* SIZE
+
+---
+
+### Approved Source Mappings
+
+BRAND
+
+ERP_PRODUCT → BRAND_NAME
+
+SUPPLIER_PRODUCT → BRAND
+
+INVENTORY_PRODUCT → BRAND_CODE
+
+ECOMMERCE_PRODUCT → VENDOR_NAME
+
+---
+
+PRODUCT_NAME
+
+ERP_PRODUCT → PRODUCT_DESCRIPTION
+
+SUPPLIER_PRODUCT → ITEM_NAME
+
+INVENTORY_PRODUCT → SKU_DESCRIPTION
+
+ECOMMERCE_PRODUCT → LISTING_TITLE
+
+---
+
+CATEGORY
+
+ERP_PRODUCT → PRODUCT_CATEGORY
+
+SUPPLIER_PRODUCT → CATEGORY_DESCRIPTION
+
+INVENTORY_PRODUCT → STORAGE_CATEGORY
+
+ECOMMERCE_PRODUCT → WEB_CATEGORY
+
+---
+
+MANUFACTURER
+
+ERP_PRODUCT → MANUFACTURER_NAME
+
+SUPPLIER_PRODUCT → MFG_NAME
+
+INVENTORY_PRODUCT → BRAND_CODE
+
+ECOMMERCE_PRODUCT → SELLER_NAME
+
+---
+
+SALE_PRICE
+
+ERP_PRODUCT → LIST_PRICE
+
+SUPPLIER_PRODUCT → UNIT_COST
+
+INVENTORY_PRODUCT → REORDER_COST
+
+ECOMMERCE_PRODUCT → SELLING_PRICE
+
+---
+
+SIZE
+
+ERP_PRODUCT → PRODUCT_SIZE
+
+SUPPLIER_PRODUCT → PACK_SIZE
+
+INVENTORY_PRODUCT → WEIGHT_SIZE
+
+ECOMMERCE_PRODUCT → DISPLAY_SIZE
 
 ---
 
@@ -181,15 +306,15 @@ Repeat for all approved attributes.
 
 Do NOT generate:
 
-- SOURCE_SUPERSET
-- DQ Procedures
-- Relationship Discovery Procedures
-- Relationship Catalog
-- Business Rules
-- DAL
-- Views
-- Tasks
-- Reports
+* SOURCE_SUPERSET
+* DQ Procedures
+* Relationship Discovery Procedures
+* Relationship Catalog
+* Business Rules
+* DAL
+* Views
+* Tasks
+* Reports
 
 Generate metadata tables only.
 
@@ -201,27 +326,27 @@ Output executable Snowflake SQL only.
 
 Include:
 
-- CREATE TABLE statements
-- Metadata seed INSERT statements
+* CREATE TABLE statements
+* Metadata seed INSERT statements
 
 Do not include:
 
-- Markdown
-- Documentation
-- Explanations
-- Alternative Designs
+* Documentation
+* Markdown
+* Explanations
+* Alternative Designs
 
 ---
 
 ## Success Criteria
 
-Execution should create:
+Execution should create and populate:
 
-RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_DQ_RULES
+* RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_DQ_RULES
+* RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_SURVIVORSHIP
+* RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_MAPPING
 
-RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_SURVIVORSHIP
-
-and populate them with approved metadata.
+The generated metadata must be sufficient for a metadata-driven SOURCE_SUPERSET implementation.
 
 The next artifact will be:
 
