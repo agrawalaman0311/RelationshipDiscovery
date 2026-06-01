@@ -2,16 +2,16 @@
 
 ## Objective
 
-Generate executable Snowflake SQL required to create and populate a metadata-driven Data Quality Results layer.
+Generate executable Snowflake SQL required to create and populate a metadata-driven Data Quality framework.
 
-The DQ framework must evaluate records in SOURCE_SUPERSET using rules defined in MD_ATTRIBUTE_DQ_RULES.
+The framework must evaluate SOURCE_SUPERSET records and generate:
 
-The output must support:
+* Attribute-Level DQ Results
+* Record-Level DQ Summary
+* DQ Scores
+* DQ Statuses
 
-* Record Quality Assessment
-* Relationship Discovery Confidence
-* Future Survivorship Processing
-* Golden Record Creation
+The results will be consumed by future Relationship Discovery processing.
 
 ---
 
@@ -36,6 +36,8 @@ Read and comply with:
 * governance/005_METADATA_DESIGN.md
 * governance/006_RELATIONSHIP_DISCOVERY_RULES.md
 
+All approved decisions are mandatory.
+
 ---
 
 ## Existing Platform
@@ -43,10 +45,6 @@ Read and comply with:
 Database:
 
 RELATIONSHIP_DISCOVERY_DB
-
-Source Schema:
-
-SRC
 
 Metadata Schema:
 
@@ -58,40 +56,45 @@ INTM
 
 ---
 
-## Existing Tables
-
-### Source
-
-* ERP_PRODUCT
-* SUPPLIER_PRODUCT
-* INVENTORY_PRODUCT
-* ECOMMERCE_PRODUCT
-
-### Metadata
+## Existing Metadata Tables
 
 * MD_ATTRIBUTE_DQ_RULES
 * MD_ATTRIBUTE_SURVIVORSHIP
 * MD_ATTRIBUTE_MAPPING
 
-### Intermediate
+---
+
+## Existing Intermediate Tables
 
 * SOURCE_SUPERSET
 
 ---
 
-## Core Requirement
+## Execution Strategy
 
-DQ processing must be metadata-driven.
+DQ_RESULTS and DQ_RECORD_SUMMARY are intermediate processing objects.
 
-MD_ATTRIBUTE_DQ_RULES is the authoritative source of DQ requirements.
+The implementation must use:
 
-Hardcoded DQ rules are prohibited.
+CREATE OR REPLACE TABLE
+
+The implementation must be idempotent.
+
+Repeated execution must produce identical record counts.
+
+CREATE TABLE IF NOT EXISTS is prohibited.
 
 ---
 
-## Table To Generate
+## Core Requirement
 
-Create:
+DQ evaluation must be metadata-driven.
+
+MD_ATTRIBUTE_DQ_RULES is the authoritative source of DQ rules.
+
+---
+
+## Table 1
 
 RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RESULTS
 
@@ -111,9 +114,7 @@ RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RESULTS
 
 ---
 
-## DQ Evaluation Scope
-
-Evaluate the following canonical attributes:
+## Attributes To Evaluate
 
 * BRAND
 * PRODUCT_NAME
@@ -124,29 +125,9 @@ Evaluate the following canonical attributes:
 
 ---
 
-## Approved DQ Rules
+## Scoring Rules
 
-Read rules from:
-
-MD_ATTRIBUTE_DQ_RULES
-
-Current metadata includes:
-
-Critical:
-
-* BRAND
-* PRODUCT_NAME
-* SIZE
-
-Rule:
-
-NOT_NULL
-
----
-
-## Scoring Model
-
-### Critical Attribute
+Critical Attribute
 
 If populated:
 
@@ -158,7 +139,7 @@ DQ_SCORE = 0
 
 ---
 
-### Non-Critical Attribute
+Non-Critical Attribute
 
 If populated:
 
@@ -170,7 +151,7 @@ DQ_SCORE = 50
 
 ---
 
-## DQ Status Logic
+## DQ Status Rules
 
 PASS
 
@@ -182,47 +163,33 @@ Attribute violates metadata rule.
 
 ---
 
-## DQ Message Logic
-
-Examples:
+## DQ Message Rules
 
 PASS
 
-"Attribute passed validation"
+Attribute passed validation.
 
 FAIL
 
-"Critical attribute missing"
-
-FAIL
-
-"Required value is null"
+Critical attribute missing.
 
 ---
 
 ## Population Requirements
 
-Generate one DQ_RESULTS row for each:
+Generate one DQ_RESULTS record per:
 
 SOURCE_RECORD × ATTRIBUTE
 
-Expected scale:
+Expected volume:
 
-Approximately:
+Approximately 254,700 rows.
 
-42,450 source records
-
-×
-
-6 attributes
-
-≈ 254,700 DQ evaluations
+(42,450 × 6)
 
 ---
 
-## Record-Level DQ Summary
-
-Additionally create:
+## Table 2
 
 RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RECORD_SUMMARY
 
@@ -243,33 +210,11 @@ RELATIONSHIP_DISCOVERY_DB.INTM.DQ_RECORD_SUMMARY
 
 ## Record Score Calculation
 
-Calculate:
-
-Average of attribute-level DQ scores.
-
-Example:
-
-BRAND = 100
-
-PRODUCT_NAME = 100
-
-CATEGORY = 50
-
-MANUFACTURER = 100
-
-SALE_PRICE = 100
-
-SIZE = 0
-
-Record Score:
-
-450 / 6
-
-= 75
+Average all attribute-level DQ scores for the record.
 
 ---
 
-## Record Status
+## Record Status Rules
 
 PASS
 
@@ -285,6 +230,23 @@ RECORD_DQ_SCORE < 60
 
 ---
 
+## Output Requirements
+
+Output executable Snowflake SQL only.
+
+Include:
+
+* CREATE OR REPLACE TABLE statements
+* Population SQL
+
+Do not include:
+
+* Documentation
+* Explanations
+* Alternative Designs
+
+---
+
 ## Constraints
 
 Do NOT generate:
@@ -292,31 +254,10 @@ Do NOT generate:
 * Relationship Discovery Logic
 * Relationship Catalog
 * Business Rules
-* Survivorship Logic
-* Golden Records
+* Golden Record Logic
 * Tasks
 * Views
 * Reports
-
-Generate DQ processing only.
-
----
-
-## Output Requirements
-
-Output executable Snowflake SQL only.
-
-Include:
-
-* CREATE TABLE statements
-* Population SQL
-
-Do not include:
-
-* Documentation
-* Explanations
-* Markdown
-* Alternative Designs
 
 ---
 
@@ -327,8 +268,12 @@ Execution must create and populate:
 * INTM.DQ_RESULTS
 * INTM.DQ_RECORD_SUMMARY
 
-The resulting DQ scores must be usable by future Relationship Discovery processing.
+Expected volumes:
+
+DQ_RESULTS ≈ 254,700
+
+DQ_RECORD_SUMMARY ≈ 42,450
 
 The next artifact will be:
 
-sql/procedures/007_relationship_discovery.sql
+sql/intm/007_relationship_candidates.sql
