@@ -1,17 +1,18 @@
-# PROMPT 004 – GENERATE METADATA TABLES
+# PROMPT 004 – GENERATE COMPLETE METADATA FRAMEWORK
 
 ## Objective
 
-Generate executable Snowflake SQL required to create and populate the approved metadata tables for the Relationship Discovery Framework.
+Generate executable Snowflake SQL required to create and populate the approved metadata framework for the Relationship Discovery Framework.
 
-These metadata tables will drive:
+The metadata framework will drive:
 
 * Data Quality Validation
-* Attribute Standardization
+* Canonical Attribute Standardization
 * Source-to-Canonical Mapping
 * Survivorship Rules
 * Relationship Discovery
-* Future Business Rules
+* Business Rules
+* SOURCE_SUPERSET Generation
 
 ---
 
@@ -54,17 +55,25 @@ MD
 
 ---
 
-## Tables To Generate
+## Mandatory Validation Requirement
 
-Generate and populate:
+The generated output MUST contain exactly three CREATE TABLE statements.
+
+The output is INVALID if any table is missing.
+
+Required tables:
 
 1. MD_ATTRIBUTE_DQ_RULES
+
 2. MD_ATTRIBUTE_SURVIVORSHIP
+
 3. MD_ATTRIBUTE_MAPPING
 
 ---
 
-## Table 1: MD_ATTRIBUTE_DQ_RULES
+## Table 1
+
+MD_ATTRIBUTE_DQ_RULES
 
 Purpose:
 
@@ -83,7 +92,7 @@ Required Columns:
 
 ---
 
-### Seed Data
+### Seed Records
 
 Generate metadata for:
 
@@ -137,11 +146,13 @@ SALE_PRICE
 
 ---
 
-## Table 2: MD_ATTRIBUTE_SURVIVORSHIP
+## Table 2
+
+MD_ATTRIBUTE_SURVIVORSHIP
 
 Purpose:
 
-Store source priority rules.
+Store source prioritization and survivorship logic.
 
 Required Columns:
 
@@ -174,7 +185,7 @@ INVENTORY_PRODUCT
 
 ---
 
-### Seed Data
+### Seed Records
 
 Generate survivorship records for:
 
@@ -185,7 +196,7 @@ Generate survivorship records for:
 * SALE_PRICE
 * SIZE
 
-Generate one record per:
+Generate one record for every:
 
 ATTRIBUTE × SOURCE_SYSTEM
 
@@ -193,13 +204,15 @@ combination.
 
 ---
 
-## Table 3: MD_ATTRIBUTE_MAPPING
+## Table 3
+
+MD_ATTRIBUTE_MAPPING
 
 Purpose:
 
 Store source-to-canonical attribute mappings.
 
-This metadata will be used by:
+This metadata will be consumed by:
 
 * SOURCE_SUPERSET
 * DQ Processing
@@ -228,77 +241,51 @@ Required Columns:
 
 ---
 
-### Approved Source Mappings
+### Approved Source Attribute Mappings
 
 BRAND
 
-ERP_PRODUCT → BRAND_NAME
-
-SUPPLIER_PRODUCT → BRAND
-
-INVENTORY_PRODUCT → BRAND_CODE
-
-ECOMMERCE_PRODUCT → VENDOR_NAME
-
----
+* ERP_PRODUCT → BRAND_NAME
+* SUPPLIER_PRODUCT → BRAND
+* INVENTORY_PRODUCT → BRAND_CODE
+* ECOMMERCE_PRODUCT → VENDOR_NAME
 
 PRODUCT_NAME
 
-ERP_PRODUCT → PRODUCT_DESCRIPTION
-
-SUPPLIER_PRODUCT → ITEM_NAME
-
-INVENTORY_PRODUCT → SKU_DESCRIPTION
-
-ECOMMERCE_PRODUCT → LISTING_TITLE
-
----
+* ERP_PRODUCT → PRODUCT_DESCRIPTION
+* SUPPLIER_PRODUCT → ITEM_NAME
+* INVENTORY_PRODUCT → SKU_DESCRIPTION
+* ECOMMERCE_PRODUCT → LISTING_TITLE
 
 CATEGORY
 
-ERP_PRODUCT → PRODUCT_CATEGORY
-
-SUPPLIER_PRODUCT → CATEGORY_DESCRIPTION
-
-INVENTORY_PRODUCT → STORAGE_CATEGORY
-
-ECOMMERCE_PRODUCT → WEB_CATEGORY
-
----
+* ERP_PRODUCT → PRODUCT_CATEGORY
+* SUPPLIER_PRODUCT → CATEGORY_DESCRIPTION
+* INVENTORY_PRODUCT → STORAGE_CATEGORY
+* ECOMMERCE_PRODUCT → WEB_CATEGORY
 
 MANUFACTURER
 
-ERP_PRODUCT → MANUFACTURER_NAME
-
-SUPPLIER_PRODUCT → MFG_NAME
-
-INVENTORY_PRODUCT → BRAND_CODE
-
-ECOMMERCE_PRODUCT → SELLER_NAME
-
----
+* ERP_PRODUCT → MANUFACTURER_NAME
+* SUPPLIER_PRODUCT → MFG_NAME
+* INVENTORY_PRODUCT → BRAND_CODE
+* ECOMMERCE_PRODUCT → SELLER_NAME
 
 SALE_PRICE
 
-ERP_PRODUCT → LIST_PRICE
-
-SUPPLIER_PRODUCT → UNIT_COST
-
-INVENTORY_PRODUCT → REORDER_COST
-
-ECOMMERCE_PRODUCT → SELLING_PRICE
-
----
+* ERP_PRODUCT → LIST_PRICE
+* SUPPLIER_PRODUCT → UNIT_COST
+* INVENTORY_PRODUCT → REORDER_COST
+* ECOMMERCE_PRODUCT → SELLING_PRICE
 
 SIZE
 
-ERP_PRODUCT → PRODUCT_SIZE
+* ERP_PRODUCT → PRODUCT_SIZE
+* SUPPLIER_PRODUCT → PACK_SIZE
+* INVENTORY_PRODUCT → WEIGHT_SIZE
+* ECOMMERCE_PRODUCT → DISPLAY_SIZE
 
-SUPPLIER_PRODUCT → PACK_SIZE
-
-INVENTORY_PRODUCT → WEIGHT_SIZE
-
-ECOMMERCE_PRODUCT → DISPLAY_SIZE
+Generate seed data for all approved mappings.
 
 ---
 
@@ -326,7 +313,7 @@ Output executable Snowflake SQL only.
 
 Include:
 
-* CREATE TABLE statements
+* Three CREATE TABLE statements
 * Metadata seed INSERT statements
 
 Do not include:
@@ -340,13 +327,13 @@ Do not include:
 
 ## Success Criteria
 
-Execution should create and populate:
+Execution must create and populate:
 
 * RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_DQ_RULES
 * RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_SURVIVORSHIP
 * RELATIONSHIP_DISCOVERY_DB.MD.MD_ATTRIBUTE_MAPPING
 
-The generated metadata must be sufficient for a metadata-driven SOURCE_SUPERSET implementation.
+The generated metadata must be sufficient to support a fully metadata-driven SOURCE_SUPERSET implementation.
 
 The next artifact will be:
 
