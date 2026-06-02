@@ -279,6 +279,82 @@ All records belonging to the same connected component must be assigned to the sa
 
 ---
 
+## Entity Resolution Relationship Eligibility
+
+Not all discovered relationships are eligible for Entity Resolution.
+
+Relationship Discovery and Entity Resolution are separate processes.
+
+Relationship Discovery may retain broader candidate relationships for analysis and reporting.
+
+Entity Resolution must use only approved relationship types when constructing business entities.
+
+Current Approved Match Types:
+
+* T0
+
+Current Excluded Match Types:
+
+* T1
+* T2
+
+Reason:
+
+T1 and T2 relationships represent similarity and candidate relationships.
+
+T0 relationships represent the highest-confidence product matches and are currently the only approved relationship type for automatic entity formation.
+
+Entity Resolution must therefore construct connected components using only T0 relationships.
+
+T1 and T2 relationships must remain available for:
+
+* Analysis
+* Stewardship
+* Future enhancement of matching logic
+
+but must not participate in automatic entity creation.
+
+Future governance decisions may expand the approved relationship set after additional validation.
+
+---
+## Business Entity Formation Rules
+
+The objective of Entity Resolution is to create one business entity representing one real-world product.
+
+For this implementation, business entities must be formed using deterministic business-key matching.
+
+Approved Entity Key Attributes:
+
+* BRAND
+* PRODUCT_NAME
+* SIZE
+
+The implementation must standardize and normalize these attributes before entity formation.
+
+Examples of standardization may include:
+
+* UPPER casing
+* Trimming whitespace
+* Standardizing common size representations
+
+Records sharing the same normalized business key must be assigned to the same ENTITY_KEY.
+
+Entity Resolution must not rely solely on graph traversal or recursive relationship expansion.
+
+Relationship discovery outputs may be used as supporting evidence, but business key matching remains the primary entity formation mechanism.
+
+This approach is intentionally adopted to:
+
+* Improve explainability
+* Reduce over-merging
+* Improve entity quality
+* Simplify governance
+* Support hackathon implementation objectives
+
+Future implementations may incorporate advanced graph-based entity resolution techniques after additional relationship validation and stewardship controls are established.
+
+---
+
 ## Lineage Preservation
 
 Entity Resolution must preserve complete lineage.
@@ -354,39 +430,3 @@ These activities will occur in later Business Rules and DAL processing.
 
 ENTITY_RESOLUTION is responsible only for assigning source records to business entities.
 
-## Entity Resolution Relationship Eligibility
-
-Not all discovered relationships are eligible for Entity Resolution.
-
-Relationship Discovery and Entity Resolution are separate processes.
-
-Relationship Discovery may retain broader candidate relationships for analysis and reporting.
-
-Entity Resolution must use only approved relationship types when constructing business entities.
-
-Current Approved Match Types:
-
-* T0
-
-Current Excluded Match Types:
-
-* T1
-* T2
-
-Reason:
-
-T1 and T2 relationships represent similarity and candidate relationships.
-
-T0 relationships represent the highest-confidence product matches and are currently the only approved relationship type for automatic entity formation.
-
-Entity Resolution must therefore construct connected components using only T0 relationships.
-
-T1 and T2 relationships must remain available for:
-
-* Analysis
-* Stewardship
-* Future enhancement of matching logic
-
-but must not participate in automatic entity creation.
-
-Future governance decisions may expand the approved relationship set after additional validation.
