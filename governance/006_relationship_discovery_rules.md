@@ -353,3 +353,40 @@ Entity Resolution is not responsible for:
 These activities will occur in later Business Rules and DAL processing.
 
 ENTITY_RESOLUTION is responsible only for assigning source records to business entities.
+
+## Entity Resolution Relationship Eligibility
+
+Not all discovered relationships are eligible for Entity Resolution.
+
+Relationship Discovery and Entity Resolution are separate processes.
+
+Relationship Discovery may retain broader candidate relationships for analysis and reporting.
+
+Entity Resolution must use only approved relationship types when constructing business entities.
+
+Current Approved Match Types:
+
+* T0
+
+Current Excluded Match Types:
+
+* T1
+* T2
+
+Reason:
+
+T1 and T2 relationships represent similarity and candidate relationships.
+
+T0 relationships represent the highest-confidence product matches and are currently the only approved relationship type for automatic entity formation.
+
+Entity Resolution must therefore construct connected components using only T0 relationships.
+
+T1 and T2 relationships must remain available for:
+
+* Analysis
+* Stewardship
+* Future enhancement of matching logic
+
+but must not participate in automatic entity creation.
+
+Future governance decisions may expand the approved relationship set after additional validation.
