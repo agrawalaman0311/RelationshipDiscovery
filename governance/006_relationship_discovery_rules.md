@@ -231,3 +231,125 @@ These relationship types may be used by:
 # 10. Approval Status
 
 Approved
+
+# ENTITY RESOLUTION GOVERNANCE
+
+## Purpose
+
+Relationship Discovery identifies related records.
+
+Entity Resolution identifies real-world business entities.
+
+These are separate processes.
+
+A relationship does not represent a business entity.
+
+Multiple relationship records may belong to the same business entity.
+
+---
+
+## Duplicate Source Records
+
+The platform must assume duplicate product records may exist:
+
+* Within the same source system
+* Across different source systems
+
+Entity Resolution must consolidate duplicate records representing the same real-world product.
+
+---
+
+## Graph-Based Entity Resolution
+
+Entity Resolution must treat:
+
+RELATIONSHIP_CATALOG
+
+as a relationship graph.
+
+Definitions:
+
+Node = Source Record
+
+Edge = Relationship
+
+Business Entity = Connected Component
+
+All records belonging to the same connected component must be assigned to the same ENTITY_KEY.
+
+---
+
+## Lineage Preservation
+
+Entity Resolution must preserve complete lineage.
+
+The platform must not discard source records during Entity Resolution.
+
+Multiple records from the same source system may belong to the same business entity.
+
+---
+
+## Survivorship Separation
+
+Entity Resolution must not perform:
+
+* Survivorship
+* Golden Record Creation
+* Attribute Selection
+* Master Record Selection
+
+These activities occur in later Business Rules.
+
+Entity Resolution is responsible only for grouping records into entities.
+
+---
+
+## DQ Participation
+
+DQ metrics must be preserved during Entity Resolution.
+
+DQ scores may be used in later survivorship and mastering processes.
+
+Entity Resolution must not eliminate records solely because of lower DQ scores.
+
+---
+
+## Source Record Ownership Rule
+
+Each source record must belong to exactly one ENTITY_KEY.
+
+A source record must never belong to multiple entities.
+
+This rule is mandatory and must be validated during Entity Resolution.
+
+---
+
+## Entity Resolution Output Model
+
+ENTITY_RESOLUTION is a lineage-preserving structure.
+
+The table must contain:
+
+* ENTITY_KEY
+* SOURCE_SYSTEM
+* SOURCE_RECORD_ID
+* RECORD_DQ_SCORE
+
+The table must not collapse multiple source records into a single source-specific column structure.
+
+Lineage must remain fully traceable for all participating records.
+
+---
+
+## Mastering Separation
+
+Entity Resolution is not responsible for:
+
+* Canonical attribute selection
+* Survivorship
+* Action generation
+* Master record creation
+
+These activities will occur in later Business Rules and DAL processing.
+
+ENTITY_RESOLUTION is responsible only for assigning source records to business entities.
