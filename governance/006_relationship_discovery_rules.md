@@ -430,3 +430,13 @@ These activities will occur in later Business Rules and DAL processing.
 
 ENTITY_RESOLUTION is responsible only for assigning source records to business entities.
 
+## Representative Record Selection
+
+Where multiple records from the same source system belong to the same ENTITY_KEY,
+the representative record shall be selected as:
+
+1. Highest RECORD_DQ_SCORE
+2. Lowest SOURCE_RECORD_ID (tie breaker)
+
+Only the representative record participates in master record creation.
+
