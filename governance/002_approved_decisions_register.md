@@ -651,3 +651,23 @@ CREATE TABLE IF NOT EXISTS
 ## Status
 
 Approved
+
+# ADR-044
+
+## Decision 
+
+Intra-Source Deduplication
+
+Within a consolidated relationship group, multiple records originating from the same source system may represent the same business product.
+
+Prior to survivorship processing, the Business Rule shall select a single surviving source record per source system.
+
+Selection shall use:
+
+1. Highest RECORD_DQ_SCORE.
+2. Lowest SOURCE_RECORD_ID as tie-breaker.
+
+Non-surviving records shall be excluded from master candidate generation but retained in upstream lineage tables.
+## Status
+
+Approved
