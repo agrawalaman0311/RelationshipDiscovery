@@ -671,3 +671,72 @@ Non-surviving records shall be excluded from master candidate generation but ret
 ## Status
 
 Approved
+
+# ADR-045
+
+## Decision 
+ACTION_LOG is the system of intent.
+## Status
+
+Approved
+# ADR-046
+
+## Decision 
+INTM_PRODUCT_MASTER is the system of state.
+## Status
+
+Approved
+# ADR-047
+
+## Decision 
+DAL is execution-only.
+## Status
+
+Approved
+# ADR-048
+
+## Decision 
+UPDATE actions contain deltas, not complete records.
+## Status
+
+Approved
+# ADR-049
+
+## Decision 
+Master records are versioned.
+## Status
+
+Approved
+# ADR-050
+
+## Decision 
+Deletes are soft deletes.
+## Status
+
+Approved
+# ADR-051
+
+## Decision 
+ENTITY_KEY is generated from
+MASTER_BRAND + MASTER_PRODUCT_NAME + MASTER_SIZE.
+## Status
+
+Approved
+# ADR-052
+
+## Decision 
+Survivorship is metadata-driven.
+## Status
+
+Approved
+# ADR-053
+
+## Decision 
+Source-level dedup occurs before survivorship.
+## Status
+
+Approved
+# ADR-054
+
+## Decision 
+Master-level dedup occurs after survivorship.
