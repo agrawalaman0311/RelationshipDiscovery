@@ -767,3 +767,32 @@ Rationale:
 ## Status
 
 Approved
+
+# ADR-055
+Metadata Driven Security Model
+
+## Decision:
+
+The MDM platform shall implement security using:
+
+1. Snowflake RBAC
+2. Dynamic Data Masking
+
+The platform shall not implement:
+
+- Row Access Policies
+- Attribute Based Access Control
+- External Identity Providers
+- SSO Integrations
+
+Rationale:
+
+The product master dataset does not currently contain
+business-unit, regional or country segmentation attributes
+required for meaningful row-level security.
+
+RBAC and Dynamic Masking provide sufficient protection
+for the current solution scope.
+
+## Status
+Approved
