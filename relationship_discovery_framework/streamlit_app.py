@@ -404,6 +404,7 @@ with tab5:
 
     st.subheader("3. Security Architecture")
 
+    st.markdown("**Security Controls**")
     security_controls = pd.DataFrame([
         {"Security Control": "RBAC", "Status": "Enabled"},
         {"Security Control": "Dynamic Masking", "Status": "Enabled"},
@@ -414,10 +415,19 @@ with tab5:
     ])
     st.dataframe(security_controls, use_container_width=True, hide_index=True)
 
+    st.markdown("**Masking Policies Applied**")
+    masking_policies = pd.DataFrame([
+        {"Policy Name": "MASK_SALE_PRICE", "Applied To": "SALE_PRICE", "Visible To": "MDM_ADMIN, MDM_DATA_STEWARD", "Masked For": "MDM_BUSINESS_USER, MDM_AUDITOR"},
+        {"Policy Name": "MASK_SOURCE_EXECUTION_REFERENCE", "Applied To": "SOURCE_EXECUTION_REFERENCE", "Visible To": "MDM_ADMIN, MDM_DATA_STEWARD", "Masked For": "MDM_BUSINESS_USER, MDM_AUDITOR"},
+        {"Policy Name": "MASK_ACTION_SOURCE", "Applied To": "ACTION_SOURCE", "Visible To": "MDM_ADMIN, MDM_DATA_STEWARD, MDM_AUDITOR", "Masked For": "MDM_BUSINESS_USER"},
+    ])
+    st.dataframe(masking_policies, use_container_width=True, hide_index=True)
+
+    st.markdown("**Protected Attributes**")
     protected_attrs = pd.DataFrame([
-        {"Attribute": "SALE_PRICE", "Protection Policy": "MASK_SALE_PRICE"},
-        {"Attribute": "SOURCE_EXECUTION_REFERENCE", "Protection Policy": "MASK_SOURCE_EXECUTION_REFERENCE"},
-        {"Attribute": "ACTION_SOURCE", "Protection Policy": "MASK_ACTION_SOURCE"},
+        {"Attribute": "SALE_PRICE", "Reason": "Commercially sensitive pricing information"},
+        {"Attribute": "SOURCE_EXECUTION_REFERENCE", "Reason": "Internal execution lineage"},
+        {"Attribute": "ACTION_SOURCE", "Reason": "Internal business rule implementation detail"},
     ])
     st.dataframe(protected_attrs, use_container_width=True, hide_index=True)
 
@@ -430,7 +440,7 @@ with tab5:
         y=alt.Y("Attribute:N", title="Protected Attribute"),
         x=alt.X("Protected:Q", title="Protection Enabled", scale=alt.Scale(domain=[0, 1.2])),
         tooltip=["Attribute"]
-    ).properties(title="Security Coverage – Protected Attributes", height=150)
+    ).properties(title="Security Coverage - Protected Attributes", height=150)
     st.altair_chart(chart, use_container_width=True)
 
     st.info(
