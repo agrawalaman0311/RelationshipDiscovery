@@ -7,3 +7,15 @@ entities:
       - pyproject.toml
       - streamlit_app.py
       - .streamlit/config.toml
+    identifier:
+      database: RELATIONSHIP_DISCOVERY_DB
+      schema: RPT
+      name: RELATIONSHIP_DISCOVERY_FRAMEWORK
+    title: relationship_discovery_framework
+    query_warehouse: EXERCISE_WAREHOUSE
+    compute_pool: SYSTEM_COMPUTE_POOL_CPU
+    run_mode: SpcsOnly
+    execute_as: OWNER
+    sharing:
+      - role: ACCOUNTADMIN
+        with_grant_option: false
