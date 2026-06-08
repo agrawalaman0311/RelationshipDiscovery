@@ -89,6 +89,14 @@ with tab1:
 
         st.divider()
 
+        st.subheader("Security Overview")
+        s1, s2, s3 = st.columns(3)
+        s1.metric("Platform Roles", 4)
+        s2.metric("Masking Policies", 3)
+        s3.metric("Protected Attributes", 3)
+
+        st.divider()
+
         col_a, col_b = st.columns(2)
 
         with col_a:
@@ -394,7 +402,53 @@ with tab5:
 
     st.divider()
 
-    st.subheader("3. Attribute Mapping")
+    st.subheader("3. Security Architecture")
+
+    security_controls = pd.DataFrame([
+        {"Security Control": "RBAC", "Status": "Enabled"},
+        {"Security Control": "Dynamic Masking", "Status": "Enabled"},
+        {"Security Control": "Row Level Security", "Status": "Not Implemented"},
+        {"Security Control": "OAuth", "Status": "Out of Scope"},
+        {"Security Control": "MFA", "Status": "Out of Scope"},
+        {"Security Control": "ABAC", "Status": "Out of Scope"},
+    ])
+    st.dataframe(security_controls, use_container_width=True, hide_index=True)
+
+    protected_attrs = pd.DataFrame([
+        {"Attribute": "SALE_PRICE", "Protection Policy": "MASK_SALE_PRICE"},
+        {"Attribute": "SOURCE_EXECUTION_REFERENCE", "Protection Policy": "MASK_SOURCE_EXECUTION_REFERENCE"},
+        {"Attribute": "ACTION_SOURCE", "Protection Policy": "MASK_ACTION_SOURCE"},
+    ])
+    st.dataframe(protected_attrs, use_container_width=True, hide_index=True)
+
+    coverage_df = pd.DataFrame([
+        {"Attribute": "SALE_PRICE", "Protected": 1},
+        {"Attribute": "SOURCE_EXECUTION_REFERENCE", "Protected": 1},
+        {"Attribute": "ACTION_SOURCE", "Protected": 1},
+    ])
+    chart = alt.Chart(coverage_df).mark_bar(cornerRadiusEnd=4, color="#2ca02c").encode(
+        y=alt.Y("Attribute:N", title="Protected Attribute"),
+        x=alt.X("Protected:Q", title="Protection Enabled", scale=alt.Scale(domain=[0, 1.2])),
+        tooltip=["Attribute"]
+    ).properties(title="Security Coverage – Protected Attributes", height=150)
+    st.altair_chart(chart, use_container_width=True)
+
+    st.info(
+        "Security is governed using the same architecture principles as metadata, business rules and lineage. "
+        "The platform implements:\n\n"
+        "- Role Based Access Control\n"
+        "- Dynamic Data Masking\n\n"
+        "while intentionally excluding:\n\n"
+        "- Row Level Security\n"
+        "- OAuth\n"
+        "- MFA\n"
+        "- ABAC\n\n"
+        "based on current business requirements."
+    )
+
+    st.divider()
+
+    st.subheader("4. Attribute Mapping")
     if df_mapping.empty:
         st.info("No attribute mappings found.")
     else:
@@ -488,6 +542,16 @@ with tab6:
       |
       v
  P15 Publish FINAL.PRODUCT_MASTER (Active records only)
+      |
+      v
+ P16 Security Layer
+     - RBAC (4 roles: MDM_ADMIN, MDM_DATA_STEWARD,
+       MDM_BUSINESS_USER, MDM_AUDITOR)
+     - Dynamic Masking (SALE_PRICE,
+       SOURCE_EXECUTION_REFERENCE, ACTION_SOURCE)
+      |
+      v
+ Dashboard
 ```
     """)
 
@@ -507,6 +571,7 @@ with tab6:
 | **Business Rules** | P10, P12–P14 | Entity resolution, derivations |
 | **DAL** | P11 | State materialization (reusable) |
 | **Final** | P15 | Golden record publication |
+| **Security** | P16 | RBAC + Dynamic Masking |
         """)
 
     with col_b:
