@@ -234,6 +234,15 @@ CREATED_DTTM = CURRENT_TIMESTAMP
 UPDATED_DTTM = CURRENT_TIMESTAMP
 
 Only successfully inserted CREATE actions may later be marked COMPLETED.
+    
+ACTION_SOURCE must be copied from ACTION_LOG into
+INTM_PRODUCT_MASTER during CREATE processing.
+
+Example:
+
+ACTION_LOG.ACTION_SOURCE
+            ↓
+INTM_PRODUCT_MASTER.ACTION_SOURCE
 
 --------------------------------------------------------------------------------
 
@@ -244,7 +253,24 @@ Process:
 ACTION_TYPE = 'UPDATE'
 
 Locate the current active master version using the snapshot captured in Phase 2.
+    
+ACTION_SOURCE must be populated from the incoming
+UPDATE action.
 
+Do not preserve the prior ACTION_SOURCE.
+
+Each version must record the process that created that version.
+
+Example:
+
+Version 1
+ACTION_SOURCE = P10_MASTER_CREATION
+
+Version 2
+ACTION_SOURCE = P12_PRODUCT_FAMILY
+
+Version 3
+ACTION_SOURCE = P13_PRODUCT_GROUP
 --------------------------------------------------------------------------------
 
 Update Action Philosophy
@@ -566,6 +592,16 @@ Conflicting actions represent upstream Business Rule defects.
 
 The DAL executes approved actions exactly as provided.
 
+ACTION_SOURCE is lineage metadata.
+
+For CREATE:
+    ACTION_SOURCE = incoming action ACTION_SOURCE
+
+For UPDATE:
+    ACTION_SOURCE = incoming action ACTION_SOURCE
+
+ACTION_SOURCE must not be merged using COALESCE.
+
   
 --------------------------------------------------------------------------------
 
@@ -631,3 +667,9 @@ Preserve One Active Version Per ENTITY_KEY
 Support Safe Re-Runs
 
 Future Business Rules may generate additional CREATE, UPDATE or DELETE actions, which shall be processed by this same DAL implementation without modification.
+The DAL must preserve version-level lineage.
+
+Each version of INTM_PRODUCT_MASTER must retain
+the ACTION_SOURCE that created that version.
+
+This enables audit reporting and lineage dashboards.
