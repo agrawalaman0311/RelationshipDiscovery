@@ -1,0 +1,92 @@
+
+
+# PHASE 1 – AI GOVERNANCE (1 Minute 30 Seconds)
+
+# PHASE 2 – PROMPT → ARTIFACT ARCHITECTURE (1 Minute)
+
+# PHASE 3 – BUSINESS RULE & DAL EXECUTION (1 Minute 15 Seconds)
+
+## SQL 1 – Actions Generated
+
+```sql
+SELECT
+    ACTION_TYPE,
+    ACTION_SOURCE,
+    ACTION_STATUS,
+    COUNT(*) CNT
+FROM RELATIONSHIP_DISCOVERY_DB.LOG.ACTION_LOG
+GROUP BY 1,2,3
+ORDER BY 1,2;
+```
+
+---
+
+## SQL 2 – Versioning
+
+```sql
+SELECT
+    ENTITY_KEY,
+    VERSION_NO,
+    ACTION_SOURCE,
+    ACTIVE_FLAG
+FROM RELATIONSHIP_DISCOVERY_DB.INTM.INTM_PRODUCT_MASTER
+ORDER BY ENTITY_KEY, VERSION_NO;
+```
+
+---
+
+## SQL 3 –  Lineage (Most Important SQL)
+
+Choose one ENTITY_KEY.
+
+```sql
+SELECT
+    ENTITY_KEY,
+    VERSION_NO,
+    ACTION_SOURCE,
+    DERIVED_PRODUCT_FAMILY,
+    DERIVED_PRODUCT_GROUP,
+    DERIVED_PRODUCT_STATUS
+FROM RELATIONSHIP_DISCOVERY_DB.INTM.INTM_PRODUCT_MASTER
+WHERE ENTITY_KEY = '<ENTITY_KEY>'
+ORDER BY VERSION_NO;
+```
+
+# PHASE 4 – DASHBOARDS & BUSINESS VALUE 
+## TAB 1 – Metadata & Governance
+
+## TAB 2 – Lineage & Audit
+
+## TAB 3 – Executive Summary
+
+
+---
+
+#  – SECURITY (
+
+## SQL – Show Roles
+
+```sql
+SHOW ROLES LIKE 'MDM%';
+```
+
+## SQL – Show Masking Policies
+
+```sql
+SHOW MASKING POLICIES;
+```
+
+## SQL – Show Policy Assignments
+
+```sql
+SELECT *
+FROM TABLE(
+  RELATIONSHIP_DISCOVERY_DB.INFORMATION_SCHEMA.POLICY_REFERENCES(
+    POLICY_NAME => 'MASK_ACTION_SOURCE'
+  )
+);
+```
+
+---
+
+#
