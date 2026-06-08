@@ -1,254 +1,232 @@
-# 5-MINUTE DEMO SCRIPT
+# 5-MINUTE DEMO SCRIPT – GOVERNED AI MDM PLATFORM
 
-## Opening Statement (10 seconds)
+## OPENING (10 SECONDS)
 
-Today I will demonstrate how we built a governed, metadata-driven MDM platform using AI.
+Today I'll demonstrate a Governed AI-Powered Relationship Discovery and Master Data Management Platform.
 
-Rather than simply generating code with an LLM, we first governed how the LLM could think, design and generate artifacts.
+Rather than simply generating code with AI, we governed the AI itself, used it to generate architecture-compliant artifacts, and then executed those artifacts to build a secure, auditable and metadata-driven MDM solution.
 
 The demo is split into four phases:
 
 1. AI Governance
-2. Prompt → Artifact Architecture
-3. Business Rule & DAL Execution
-4. Dashboards & Business Value
+2. Relationship Discovery & Cataloging
+3. Mastering Engine & Execution
+4. Governance, Security & Business Value
 
 ---
 
-# PHASE 1 – AI GOVERNANCE (1 Minute 30 Seconds)
+## PHASE 1 – AI GOVERNANCE (45 SECONDS)
 
-## Screen
-
-Open governance folder.
+Open Governance Folder
 
 Show:
 
-* 001_MASTER_CONSTITUTION
-* 002_APPROVED_DECISIONS_REGISTER
-* 003_PROMPT_OS
-* 004_PROJECT_CONTEXT
-* 005_METADATA_DESIGN
-* 006_SECURITY_ARCHITECTURE
-
-## Talk Track
-
-Most teams use AI to generate code.
-
-We governed AI before allowing it to generate code.
-
-Every generated artifact must comply with:
-
-* Platform Governance
-* Architecture Decisions
-* Prompt Standards
-* Metadata Rules
-* Security Standards
-
-This prevents architectural drift and ensures consistent implementation.
-
----
-
-## Show ADR
-
-Open:
+001_MASTER_CONSTITUTION
 
 002_APPROVED_DECISIONS_REGISTER
 
-Highlight:
+003_PROMPT_OS
 
+004_PROJECT_CONTEXT
+
+005_METADATA_DESIGN
+
+006_SECURITY_ARCHITECTURE
+
+Say:
+
+Most teams use AI to generate code.
+
+We governed AI before allowing it to generate anything.
+
+Every prompt must comply with architecture decisions, metadata standards, security standards and prompt governance.
+
+This prevents architectural drift and ensures consistent, repeatable outputs.
+
+Open ADR
+
+Show:
+
+* Relationship Candidate First
+* Relationship Catalog Driven Matching
 * BR → DAL Pattern
-* One Active Record Per Entity
-* Soft Deletes
 * Versioning
 * Metadata Driven Governance
-* RBAC + Dynamic Masking
+* Security By Design
 
-## Talk Track
+Say:
 
-Every future prompt inherits these decisions automatically.
+Every generated artifact automatically inherits these decisions.
 
-This means the LLM cannot generate implementations that violate approved architecture.
+The LLM cannot generate implementations that violate approved architecture.
 
 This is AI Governance.
 
 ---
 
-# PHASE 2 – PROMPT → ARTIFACT ARCHITECTURE (1 Minute)
+## PHASE 2 – RELATIONSHIP DISCOVERY & CATALOGING (1 MINUTE)
 
-## Screen
+Go To Dashboard
 
-Open prompts folder.
+Open:
+
+Relationship Discovery
+
+Say:
+
+Before creating a master record, we must first determine which records belong together across ERP, Supplier, Inventory and Ecommerce systems.
+
+Show Discovery Funnel
+
+Point to:
+
+* Candidates Evaluated
+* Cataloged (Best Match)
+* Precision Filter
+* Catalog Ratio
+
+Say:
+
+Our engine evaluates relationship candidates across all source systems and filters them into a trusted catalog.
+
+Show Match Type Distribution
+
+Point to:
+
+* T0
+* T1
+* T2
+
+Say:
+
+T0 represents exact matches.
+
+T1 represents fuzzy matches.
+
+T2 represents similarity and prefix-based matches.
+
+Show Cross-System Connectivity Heatmap
+
+Say:
+
+This shows how products connect across different source systems.
+
+The result is a trusted relationship catalog that becomes the foundation of mastering.
+
+Run SQL:
+
+SELECT
+MATCH_TYPE,
+MATCH_CONFIDENCE,
+COUNT(*)
+FROM RELATIONSHIP_DISCOVERY_DB.INTM.RELATIONSHIP_CATALOG
+GROUP BY 1,2
+ORDER BY 1,2;
+
+Say:
+
+Every relationship is scored, classified and cataloged before any mastering occurs.
+
+---
+
+## PHASE 3 – MASTERING ENGINE & EXECUTION (1 MINUTE 30 SECONDS)
+
+Go To Architecture Tab
 
 Show:
 
-* P10_MASTER_CREATION
-* P11_DAL
-* P12_PRODUCT_FAMILY
-* P13_PRODUCT_GROUP
-* P14_PRODUCT_STATUS
-* P15_PUBLISH_MASTER
-* P16_SECURITY_IMPLEMENTATION
+P10
+P11
+P12
+P13
+P14
+P15
+P16
 
-## Talk Track
+Say:
 
-Instead of generating a monolithic application, we generated independent governed assets.
+Once relationships are cataloged, mastering begins.
 
-Pattern:
+Instead of generating one large application, we generated governed and reusable artifacts.
 
-Prompt
-↓
-Governance
-↓
-SQL Artifact
+Highlight:
 
-Each prompt has a single responsibility.
+P10 – Master Creation
 
-Each artifact remains modular, testable and reusable.
+P11 – DAL
 
-Example:
+P12 – Product Family
 
-P13_PRODUCT_GROUP
+P13 – Product Group
 
-Prompt
-↓
-013_DERIVE_PRODUCT_GROUP.SQL
+P14 – Product Status
 
-This creates controlled, repeatable engineering.
+P15 – Publish
 
----
+P16 – Security
 
-# PHASE 3 – BUSINESS RULE & DAL EXECUTION (1 Minute 15 Seconds)
-
-## Screen
-
-Show Architecture Diagram
-
-ERP
-SUPPLIER
-INVENTORY
-ECOMMERCE
-
-↓
-
-P10_MASTER_CREATION
-
-↓
-
-ACTION_LOG
-
-↓
-
-P11_DAL
-
-↓
-
-INTM_PRODUCT_MASTER
-
-↓
-
-P12_PRODUCT_FAMILY
-
-↓
-
-P13_PRODUCT_GROUP
-
-↓
-
-P14_PRODUCT_STATUS
-
-↓
-
-P15_PUBLISH_MASTER
-
-↓
-
-FINAL.PRODUCT_MASTER
-
-↓
-
-P16_SECURITY
-
-↓
-
-Dashboard
-
----
-
-## Talk Track
+Say:
 
 Business Rules never update records directly.
 
 Business Rules generate actions.
 
-DAL executes actions.
+The DAL materializes those actions into the master data layer.
 
-Every change becomes versioned and auditable.
+Run SQL:
 
----
-
-## SQL 1 – Show Actions Generated
-
-```sql
 SELECT
-    ACTION_TYPE,
-    ACTION_SOURCE,
-    ACTION_STATUS,
-    COUNT(*) CNT
+ACTION_TYPE,
+ACTION_SOURCE,
+ACTION_STATUS,
+COUNT(*) CNT
 FROM RELATIONSHIP_DISCOVERY_DB.LOG.ACTION_LOG
 GROUP BY 1,2,3
 ORDER BY 1,2;
-```
 
-## Talk Track
+Say:
 
-Each Business Rule generates actions instead of directly modifying records.
+Every business rule creates auditable actions.
 
-This creates a controlled execution model.
+This provides complete transparency and control over execution.
 
----
+Go To:
 
-## SQL 2 – Show Versioning
+MDM Processing
 
-```sql
+Show:
+
+* Phase 1 – Entities Created
+* Phase 2 – Families Derived
+* Phase 3 – Groups Derived
+* Phase 4 – Statuses Derived
+
+Say:
+
+Every transformation is executed through the DAL while preserving complete history.
+
+Go To:
+
+Lineage & Audit
+
+Select one ENTITY_KEY
+
+Run SQL:
+
 SELECT
-    ENTITY_KEY,
-    VERSION_NO,
-    ACTION_SOURCE,
-    ACTIVE_FLAG
-FROM RELATIONSHIP_DISCOVERY_DB.INTM.INTM_PRODUCT_MASTER
-ORDER BY ENTITY_KEY, VERSION_NO;
-```
-
-## Talk Track
-
-Every update creates a new version.
-
-History is preserved while maintaining one active record.
-
----
-
-## SQL 3 – Show Lineage (Most Important SQL)
-
-Choose one ENTITY_KEY.
-
-```sql
-SELECT
-    ENTITY_KEY,
-    VERSION_NO,
-    ACTION_SOURCE,
-    DERIVED_PRODUCT_FAMILY,
-    DERIVED_PRODUCT_GROUP,
-    DERIVED_PRODUCT_STATUS
+ENTITY_KEY,
+VERSION_NO,
+ACTION_SOURCE,
+ACTIVE_FLAG
 FROM RELATIONSHIP_DISCOVERY_DB.INTM.INTM_PRODUCT_MASTER
 WHERE ENTITY_KEY = '<ENTITY_KEY>'
 ORDER BY VERSION_NO;
-```
 
-## Talk Track
+Say:
 
 This demonstrates complete lineage.
 
-We can trace exactly which business rule created every version.
+Every version can be traced back to the exact business rule that created it.
 
 Example:
 
@@ -260,70 +238,75 @@ Version 3 → P13_PRODUCT_GROUP
 
 Version 4 → P14_PRODUCT_STATUS
 
----
-
-# PHASE 4 – DASHBOARDS & BUSINESS VALUE (1 Minute 15 Seconds)
-
-Do NOT show every tab.
-
-Show only three tabs.
+This gives us full auditability and explainability.
 
 ---
 
-## TAB 1 – Metadata & Governance
+## PHASE 4 – GOVERNANCE, SECURITY & BUSINESS VALUE (1 MINUTE 20 SECONDS)
 
-### Talk Track
+Go To:
 
-Governance is externalized into metadata.
+Metadata & Governance
 
-Show:
+Say:
 
-* DQ Rules
-* Survivorship Rules
-* Attribute Mapping
-* Security Controls
+Governance is externalized into metadata rather than embedded in code.
 
-Explain:
+Show DQ Rules
 
-Mappings determine how source attributes become canonical attributes.
+Say:
 
-Survivorship rules determine source priorities.
+Data Quality is driven by metadata-defined rules.
 
-DQ rules define quality expectations.
+Show Survivorship Rules
 
-Security rules govern platform access.
+Say:
 
-Spend ~20 seconds.
+When multiple systems provide the same attribute, metadata determines which source wins.
 
----
+Show Attribute Mapping
 
-## TAB 2 – Lineage & Audit
+Say:
 
-Select one ENTITY_KEY.
+Each source system maps into a canonical product model.
 
-Show:
+Show Security Architecture
 
-Version 1 → P10_MASTER_CREATION
+Say:
 
-Version 2 → P12_PRODUCT_FAMILY
+We implemented security using Role-Based Access Control and Dynamic Data Masking.
 
-Version 3 → P13_PRODUCT_GROUP
+Run SQL:
 
-Version 4 → P14_PRODUCT_STATUS
+USE ROLE MDM_ADMIN;
 
-## Talk Track
+SELECT
+SALE_PRICE,
+ACTION_SOURCE
+FROM RELATIONSHIP_DISCOVERY_DB.FINAL.PRODUCT_MASTER
+LIMIT 5;
 
-This demonstrates complete auditability.
+Say:
 
-Every version remains traceable.
+Administrators can view commercial and lineage information.
 
-Every transformation remains explainable.
+Run SQL:
 
-Spend ~30 seconds.
+USE ROLE MDM_BUSINESS_USER;
 
----
+SELECT
+SALE_PRICE,
+ACTION_SOURCE
+FROM RELATIONSHIP_DISCOVERY_DB.FINAL.PRODUCT_MASTER
+LIMIT 5;
 
-## TAB 3 – Executive Summary
+Say:
+
+Business users can consume mastered data while sensitive information remains protected.
+
+Go To:
+
+Executive Summary
 
 Show:
 
@@ -331,66 +314,72 @@ Show:
 * Product Families
 * Product Groups
 * Product Statuses
-* Security Overview
+* Security Posture
 
-## Talk Track
+Say:
 
-This is the final mastered product domain.
-
-All records have passed through governance, survivorship, derivation and security controls.
-
-Spend ~20 seconds.
+This is the final governed golden record layer consumed by the business.
 
 ---
 
-# BONUS – SECURITY (Only If Asked)
-
-## SQL – Show Roles
-
-```sql
-SHOW ROLES LIKE 'MDM%';
-```
-
-## SQL – Show Masking Policies
-
-```sql
-SHOW MASKING POLICIES;
-```
-
-## SQL – Show Policy Assignments
-
-```sql
-SELECT *
-FROM TABLE(
-  RELATIONSHIP_DISCOVERY_DB.INFORMATION_SCHEMA.POLICY_REFERENCES(
-    POLICY_NAME => 'MASK_ACTION_SOURCE'
-  )
-);
-```
-
-## Talk Track
-
-Security is implemented through:
-
-* RBAC
-* Dynamic Data Masking
-
-Security is governed using the same framework as metadata and business rules.
-
----
-
-# CLOSING STATEMENT (15 Seconds)
+## CLOSING (15 SECONDS)
 
 We did not simply build an MDM platform.
 
-We built a governed AI engineering framework that converts architecture decisions, metadata and prompts into auditable enterprise data products.
+We built a governed AI engineering framework.
 
-The result is:
+Governance controls the AI.
 
-* Governed AI Development
-* Metadata Driven MDM
-* Versioned Lineage
-* Security By Design
-* Fully Auditable Master Data
+The AI generates architecture-compliant artifacts.
 
-Thank you.
+Those artifacts create secure, metadata-driven, versioned and fully auditable master data products.
+
+The result is a platform that delivers relationship discovery, mastering, governance, security and complete business traceability.
+
+---
+
+## SQL CHEAT SHEET
+
+SELECT CURRENT_ROLE();
+
+SELECT
+MATCH_TYPE,
+MATCH_CONFIDENCE,
+COUNT(*)
+FROM RELATIONSHIP_DISCOVERY_DB.INTM.RELATIONSHIP_CATALOG
+GROUP BY 1,2
+ORDER BY 1,2;
+
+SELECT
+ACTION_TYPE,
+ACTION_SOURCE,
+ACTION_STATUS,
+COUNT(*) CNT
+FROM RELATIONSHIP_DISCOVERY_DB.LOG.ACTION_LOG
+GROUP BY 1,2,3
+ORDER BY 1,2;
+
+SELECT
+ENTITY_KEY,
+VERSION_NO,
+ACTION_SOURCE,
+ACTIVE_FLAG
+FROM RELATIONSHIP_DISCOVERY_DB.INTM.INTM_PRODUCT_MASTER
+WHERE ENTITY_KEY = '<ENTITY_KEY>'
+ORDER BY VERSION_NO;
+
+USE ROLE MDM_ADMIN;
+
+SELECT
+SALE_PRICE,
+ACTION_SOURCE
+FROM RELATIONSHIP_DISCOVERY_DB.FINAL.PRODUCT_MASTER
+LIMIT 5;
+
+USE ROLE MDM_BUSINESS_USER;
+
+SELECT
+SALE_PRICE,
+ACTION_SOURCE
+FROM RELATIONSHIP_DISCOVERY_DB.FINAL.PRODUCT_MASTER
+LIMIT 5;
