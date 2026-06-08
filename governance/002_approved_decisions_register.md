@@ -740,3 +740,30 @@ Approved
 
 ## Decision 
 Master-level dedup occurs after survivorship.
+## Status
+
+Approved
+# ADR-054
+
+## Decision 
+
+Derived Attribute Hierarchy
+
+Approved Hierarchy:
+
+CATEGORY
+    ↓
+DERIVED_PRODUCT_FAMILY
+    ↓
+DERIVED_PRODUCT_GROUP
+    ↓
+DERIVED_PRODUCT_STATUS
+
+Rationale:
+
+- Derived attributes must be built from mastered attributes whenever possible.
+- Downstream derivations should not re-read raw source attributes.
+- This reduces duplication and improves explainability.
+## Status
+
+Approved
