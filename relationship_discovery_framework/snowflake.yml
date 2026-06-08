@@ -2,11 +2,6 @@ definition_version: 2
 entities:
   streamlit_app:
     type: streamlit
-    main_file: streamlit_app.py
-    artifacts:
-      - pyproject.toml
-      - streamlit_app.py
-      - .streamlit/config.toml
     identifier:
       database: RELATIONSHIP_DISCOVERY_DB
       schema: RPT
@@ -16,6 +11,11 @@ entities:
     compute_pool: SYSTEM_COMPUTE_POOL_CPU
     run_mode: SpcsOnly
     execute_as: OWNER
+    main_file: streamlit_app.py
+    artifacts:
+      - pyproject.toml
+      - streamlit_app.py
+      - .streamlit/config.toml
     sharing:
       - role: ACCOUNTADMIN
         with_grant_option: false
