@@ -76,7 +76,7 @@ st.markdown("""
 st.markdown("""
 <div class="hero">
     <h1>Relationship Discovery Framework</h1>
-    <p>Intelligent Entity Resolution — Transforming 42,450 fragmented records into 5,567 golden products</p>
+    <p>Intelligent Entity Resolution — Transforming 42,650 fragmented records into 5,738 golden products</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -112,15 +112,15 @@ with tab1:
     st.markdown('<p class="section-title">The Pipeline</p>', unsafe_allow_html=True)
     p1, p2, p3, p4, p5 = st.columns(5)
     with p1:
-        st.markdown('<div class="pipeline-step"><div class="number">42,450</div><div class="label">SOURCE RECORDS<br/>4 Systems</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="pipeline-step"><div class="number">42,650</div><div class="label">SOURCE RECORDS<br/>4 Systems</div></div>', unsafe_allow_html=True)
     with p2:
-        st.markdown('<div class="pipeline-step"><div class="number">21.8M</div><div class="label">CANDIDATES<br/>Pairs Evaluated</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="pipeline-step"><div class="number">17.6M</div><div class="label">CANDIDATES<br/>Pairs Evaluated</div></div>', unsafe_allow_html=True)
     with p3:
-        st.markdown('<div class="pipeline-step"><div class="number">30,000</div><div class="label">CATALOGED<br/>Best Matches</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="pipeline-step"><div class="number">27,617</div><div class="label">CATALOGED<br/>Best Matches</div></div>', unsafe_allow_html=True)
     with p4:
-        st.markdown('<div class="pipeline-step"><div class="number">5,567</div><div class="label">GOLDEN RECORDS<br/>Unique Products</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="pipeline-step"><div class="number">5,738</div><div class="label">GOLDEN RECORDS<br/>Unique Products</div></div>', unsafe_allow_html=True)
     with p5:
-        st.markdown('<div class="pipeline-step"><div class="number">86.9%</div><div class="label">DEDUPLICATION<br/>Rate Achieved</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="pipeline-step"><div class="number">86.5%</div><div class="label">DEDUPLICATION<br/>Rate Achieved</div></div>', unsafe_allow_html=True)
 
     st.markdown("")
     st.markdown("")
@@ -130,27 +130,38 @@ with tab1:
     with col_l:
         st.markdown('<p class="section-title">Consolidation Power</p>', unsafe_allow_html=True)
         funnel_data = pd.DataFrame([
-            {"Stage": "1. Source Ingestion", "Records": 42450, "Description": "4 systems harmonized"},
-            {"Stage": "2. Candidate Pairs", "Records": 21797578, "Description": "Pairwise discovery"},
-            {"Stage": "3. Cataloged Matches", "Records": 30000, "Description": "Best-match per entity"},
-            {"Stage": "4. Golden Records", "Records": 5567, "Description": "Final mastered products"},
+            {"Stage": "1. Source Ingestion", "Records": 42650, "Description": "4 systems harmonized"},
+            {"Stage": "2. Candidate Pairs", "Records": 17581502, "Description": "Pairwise discovery"},
+            {"Stage": "3. Cataloged Matches", "Records": 27617, "Description": "Best-match per entity"},
+            {"Stage": "4. Golden Records", "Records": 5738, "Description": "Final mastered products"},
         ])
-        chart = alt.Chart(funnel_data).mark_bar(cornerRadiusTopRight=8, cornerRadiusBottomRight=8).encode(
+        funnel_data["Pct"] = funnel_data["Records"].apply(
+            lambda x: max((x / funnel_data["Records"].max()) * 100, 8)
+        ).round(1)
+        funnel_data["Label"] = funnel_data["Records"].apply(lambda x: f"{x/1e6:.1f}M" if x >= 1e6 else f"{x:,.0f}")
+
+        bars = alt.Chart(funnel_data).mark_bar(cornerRadiusTopRight=8, cornerRadiusBottomRight=8).encode(
             y=alt.Y("Stage:N", sort=None, title=None, axis=alt.Axis(labelFontSize=12, labelFontWeight="bold")),
-            x=alt.X("Records:Q", title="Record Count (Log Scale)", scale=alt.Scale(type="log")),
+            x=alt.X("Pct:Q", title="Relative Scale (%)", scale=alt.Scale(domain=[0, 105])),
             color=alt.Color("Stage:N", legend=None,
                            scale=alt.Scale(range=[C["sky"], C["violet"], C["indigo"], C["emerald"]])),
             tooltip=["Stage", alt.Tooltip("Records:Q", format=","), "Description"]
-        ).properties(height=220)
-        st.altair_chart(chart, use_container_width=True)
+        )
+        text = alt.Chart(funnel_data).mark_text(align="left", dx=4, fontSize=13, fontWeight="bold").encode(
+            y=alt.Y("Stage:N", sort=None),
+            x=alt.X("Pct:Q"),
+            text="Label:N",
+            color=alt.value("#1e293b")
+        )
+        st.altair_chart((bars + text).properties(height=220), use_container_width=True)
 
     with col_r:
         st.markdown('<p class="section-title">Source Systems</p>', unsafe_allow_html=True)
         src_data = pd.DataFrame([
-            {"System": "ERP", "Records": 10250, "Brands": 35},
-            {"System": "Supplier", "Records": 10800, "Brands": 33},
-            {"System": "Inventory", "Records": 10450, "Brands": 53},
-            {"System": "Ecommerce", "Records": 10950, "Brands": 33},
+            {"System": "ERP", "Records": 10300, "Brands": 35},
+            {"System": "Supplier", "Records": 10850, "Brands": 43},
+            {"System": "Inventory", "Records": 10500, "Brands": 64},
+            {"System": "Ecommerce", "Records": 11000, "Brands": 44},
         ])
         chart = alt.Chart(src_data).mark_bar(cornerRadiusTopLeft=8, cornerRadiusTopRight=8).encode(
             x=alt.X("System:N", title=None, axis=alt.Axis(labelAngle=0)),
@@ -192,11 +203,11 @@ with tab1:
     st.divider()
     st.markdown('<p class="section-title">Key Results</p>', unsafe_allow_html=True)
     r1, r2, r3, r4, r5 = st.columns(5)
-    r1.metric("Consolidation", "7.6 : 1")
-    r2.metric("Precision Filter", "99.86%")
-    r3.metric("DQ Pass Rate", "98.9%")
+    r1.metric("Consolidation", "7.4 : 1")
+    r2.metric("Precision Filter", "99.84%")
+    r3.metric("DQ Pass Rate", "99.0%")
     r4.metric("Cross-System Links", "6 pairs")
-    r5.metric("Versions Tracked", "22,268")
+    r5.metric("Versions Tracked", "22,952")
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -461,9 +472,9 @@ with tab3:
         """)
 
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Candidates Generated", "21.8M")
+    m1.metric("Candidates Generated", "17.6M")
     m2.metric("Cataloged (Best)", f"{len(df_catalog):,}")
-    m3.metric("Reduction", "99.86%")
+    m3.metric("Reduction", "99.84%")
     m4.metric("Avg DQ Score", f"{df_catalog['DQ_WEIGHTED_SCORE'].mean():.1f}")
 
     st.divider()
@@ -639,8 +650,8 @@ with tab5:
 
     m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Golden Records", f"{len(df_master):,}")
-    m2.metric("Product Families", "10")
-    m3.metric("Product Groups", "6")
+    m2.metric("Product Families", "11")
+    m3.metric("Product Groups", "7")
     m4.metric("Active Products", f"{int((df_master['DERIVED_PRODUCT_STATUS'] == 'ACTIVE').sum()):,}")
     m5.metric("Under Review", f"{int((df_master['DERIVED_PRODUCT_STATUS'] == 'REVIEW').sum()):,}")
 
@@ -709,18 +720,18 @@ with tab5:
 
     st.markdown('<p class="section-title">Processing Audit Trail</p>', unsafe_allow_html=True)
     a1, a2, a3, a4 = st.columns(4)
-    a1.metric("P10 — Entity Creation", "5,567")
+    a1.metric("P10 — Entity Creation", "5,738")
     a1.caption("Connected-component resolution")
-    a2.metric("P12 — Family Derivation", "5,567")
+    a2.metric("P12 — Family Derivation", "5,738")
     a2.caption("CATEGORY → PRODUCT_FAMILY")
-    a3.metric("P13 — Group Derivation", "5,567")
+    a3.metric("P13 — Group Derivation", "5,738")
     a3.caption("FAMILY → PRODUCT_GROUP")
-    a4.metric("P14 — Status Assignment", "5,567")
+    a4.metric("P14 — Status Assignment", "5,738")
     a4.caption("GROUP → ACTIVE/REVIEW")
 
     st.markdown("""
     <div class="callout callout-green" style="margin-top:16px;">
-        <strong>100% Success Rate</strong> — All 22,268 actions across 4 processing phases completed successfully.
+        <strong>100% Success Rate</strong> — All 22,952 actions across 4 processing phases completed successfully.
         Every entity has full version history and audit lineage traceable to source records.
     </div>
     """, unsafe_allow_html=True)
@@ -744,16 +755,20 @@ with tab6:
         st.markdown('<p class="section-title">End-to-End Pipeline</p>', unsafe_allow_html=True)
         st.code("""
 ┌─────────────────────────────────────────────────────────┐
+│  GITHUB — Version Control, PR Reviews, CI/CD Pipelines  │
+└───────────────────────────┬─────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────┐
 │  P1   Platform Setup (Database, Schemas, Roles)         │
 │  P2   Source Tables (ERP, Supplier, Inventory, Ecomm)   │
-│  P3   Test Data Generation (10K+ per source)            │
+│  P3   Test Data Generation (10K+ per source system)     │
 │  P4   Metadata (DQ Rules, Survivorship, Mappings)       │
 └───────────────────────────┬─────────────────────────────┘
                             ▼
 ┌─────────────────────────────────────────────────────────┐
 │  P5   SOURCE_SUPERSET — Canonical harmonization         │
 │  P6   DQ_RESULTS — Score every record (0–100)          │
-│  P7   RELATIONSHIP_CANDIDATES — 21.8M pairs evaluated  │
+│  P7   RELATIONSHIP_CANDIDATES — 17.6M pairs evaluated  │
 │  P8   RELATIONSHIP_CATALOG — Best-match selection       │
 └───────────────────────────┬─────────────────────────────┘
                             ▼
@@ -817,12 +832,14 @@ with tab6:
     st.divider()
 
     st.markdown('<p class="section-title">Technology Stack</p>', unsafe_allow_html=True)
-    t1, t2, t3, t4 = st.columns(4)
+    t1, t2, t3, t4, t5 = st.columns(5)
     t1.metric("Platform", "Snowflake")
     t1.caption("Native SQL + Snowpark")
     t2.metric("Visualization", "Streamlit")
     t2.caption("In-Snowflake deployment")
-    t3.metric("Governance", "RBAC + Masking")
-    t3.caption("Enterprise-grade security")
-    t4.metric("Architecture", "16 Phases")
-    t4.caption("Modular, testable, auditable")
+    t3.metric("CI/CD", "GitHub")
+    t3.caption("Code repo + PR reviews")
+    t4.metric("Governance", "RBAC + Masking")
+    t4.caption("Enterprise-grade security")
+    t5.metric("Architecture", "16 Phases")
+    t5.caption("Modular, testable, auditable")
