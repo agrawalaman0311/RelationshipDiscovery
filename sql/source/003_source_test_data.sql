@@ -357,7 +357,7 @@ VALUES
 ('ERP-DEMO-019', 'Vertex', 'Adapter 250G', 'Industrial', 'Premier Manufacturing', 28.00, '250G', CURRENT_TIMESTAMP()),
 ('ERP-DEMO-020', 'Fusion', 'Lubricant 2L', 'Automotive', 'National Products Inc', 38.99, '2L', CURRENT_TIMESTAMP());
 
-INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.SUPPLIER_PRODUCT (SUPPLIER_CODE, BRAND, ITEM_NAME, CATEGORY_DESCRIPTION, MFG_NAME, UNIT_COST, PACK_SIZE, LOAD_DTTM)
+INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.SUPPLIER_PRODUCT (ITEM_CODE, BRAND, ITEM_NAME, CATEGORY_DESCRIPTION, MFG_NAME, UNIT_COST, PACK_SIZE, LOAD_DTTM)
 VALUES
 ('SUP-DEMO-001', 'Procter & Gamble', 'Detergent 1L', 'Consumer/FMCG', 'Global Manufacturing Co', 18.50, '1000ml', CURRENT_TIMESTAMP()),
 ('SUP-DEMO-002', 'Johnson & Johnson', 'Sanitizer 500ML', 'Healthcare/Medical', 'Premier', 9.20, '500ml', CURRENT_TIMESTAMP()),
@@ -403,28 +403,28 @@ VALUES
 ('SKU-DEMO-019', 'VERTE', 'Adapter 250G', 'IND-STORE', 16.50, '0.25KG', CURRENT_TIMESTAMP()),
 ('SKU-DEMO-020', 'FUSIO', 'Lubricant 2L', 'AUTO-STORE', 23.00, '2L', CURRENT_TIMESTAMP());
 
-INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.ECOMMERCE_PRODUCT (WEB_SKU, VENDOR_NAME, LISTING_TITLE, WEB_CATEGORY, SELLER_NAME, SELLING_PRICE, DISPLAY_SIZE, LOAD_DTTM)
+INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.ECOMMERCE_PRODUCT (VENDOR_CODE, LISTING_TITLE, VENDOR_NAME, WEB_CATEGORY, SELLER_NAME, SELLING_PRICE, DISPLAY_SIZE, LOAD_DTTM)
 VALUES
-('ECOM-DEMO-001', 'Procter & Gamble', 'Procter & Gamble Detergent - 1 Liter', 'Consumer Products', 'MegaSupply Hub', 29.99, '1 Liter', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-002', 'Johnson & Johnson', 'J&J Sanitizer 500ml - Fast Shipping', 'Health & Wellness', 'PrimeParts Direct', 15.99, '500 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-003', 'Unilever', 'Unilever All-Purpose Cleaner 2L', 'Cleaning Supplies', 'ValueMax Outlet', 23.99, '2 Liters', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-004', 'Colgate', 'Colgate Premium Polish 250g', 'Beauty & Personal Care', 'QuickShip Warehouse', 11.49, '250 Grams', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-005', 'Henkel', 'Henkel Industrial Adhesive 100ml', 'Industrial & Scientific', 'TechDirect Store', 42.99, '100 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-006', 'Kimberly Clark', 'Kimberly Clark Filter - Large Size', 'Consumer Products', 'MegaSupply Hub', 54.99, 'Large Size', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-007', 'Reckitt', 'Reckitt Medical Pump 500g', 'Health & Wellness', 'PrimeParts Direct', 37.99, '500 Grams', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-008', 'Acme', 'Acme Widget 250ml - Best Seller', 'Electronics & Gadgets', 'TechDirect Store', 19.99, '250 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-009', 'Nexus', 'Nexus Industrial Controller 1kg', 'Industrial & Scientific', 'Global Manufacturing Co', 109.99, '1 Kilogram', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-010', 'Pinnacle', 'Pinnacle Auto Sensor - Medium', 'Automotive Parts', 'QuickShip Warehouse', 69.99, 'Medium Size', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-011', 'Clorox', 'Clorox Heavy Duty Solvent 5kg', 'Cleaning Supplies', 'ValueMax Outlet', 84.99, '5 Kilograms', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-012', 'Church & Dwight', 'Church & Dwight Coating 500ml', 'Home & Garden', 'MegaSupply Hub', 28.99, '500 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-013', 'Atlas', 'Atlas Performance Motor - Small', 'Automotive Parts', 'PrimeParts Direct', 149.99, 'Small Size', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-014', 'Titan', 'Titan XL Drive - Industrial Grade', 'Industrial & Scientific', 'TechDirect Store', 249.99, 'Extra Large', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-015', 'Summit', 'Summit Office Bracket 100g', 'Office & School', 'QuickShip Warehouse', 9.99, '100 Grams', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-016', 'Horizon', 'Horizon Relay 50g - Precision', 'Electronics & Gadgets', 'TechDirect Store', 57.99, '50 Grams', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-017', 'Nova', 'Nova Switch 1L - Premium', 'Consumer Products', 'MegaSupply Hub', 42.99, '1 Liter', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-018', 'Apex', 'Apex Processor Medium - Pro Series', 'Electronics & Gadgets', 'Global Manufacturing Co', 189.99, 'Medium Size', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-019', 'Vertex', 'Vertex Industrial Adapter 250g', 'Industrial & Scientific', 'PrimeParts Direct', 35.99, '250 Grams', CURRENT_TIMESTAMP()),
-('ECOM-DEMO-020', 'Fusion', 'Fusion Auto Lubricant 2L', 'Automotive Parts', 'QuickShip Warehouse', 48.99, '2 Liters', CURRENT_TIMESTAMP());
+('ECOM-DEMO-001', 'Procter & Gamble Detergent - 1 Liter', 'Procter & Gamble', 'Consumer Products', 'MegaSupply Hub', 29.99, '1 Liter', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-002', 'J&J Sanitizer 500ml - Fast Shipping', 'Johnson & Johnson', 'Health & Wellness', 'PrimeParts Direct', 15.99, '500 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-003', 'Unilever All-Purpose Cleaner 2L', 'Unilever', 'Cleaning Supplies', 'ValueMax Outlet', 23.99, '2 Liters', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-004', 'Colgate Premium Polish 250g', 'Colgate', 'Beauty & Personal Care', 'QuickShip Warehouse', 11.49, '250 Grams', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-005', 'Henkel Industrial Adhesive 100ml', 'Henkel', 'Industrial & Scientific', 'TechDirect Store', 42.99, '100 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-006', 'Kimberly Clark Filter - Large Size', 'Kimberly Clark', 'Consumer Products', 'MegaSupply Hub', 54.99, 'Large Size', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-007', 'Reckitt Medical Pump 500g', 'Reckitt', 'Health & Wellness', 'PrimeParts Direct', 37.99, '500 Grams', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-008', 'Acme Widget 250ml - Best Seller', 'Acme', 'Electronics & Gadgets', 'TechDirect Store', 19.99, '250 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-009', 'Nexus Industrial Controller 1kg', 'Nexus', 'Industrial & Scientific', 'Global Manufacturing Co', 109.99, '1 Kilogram', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-010', 'Pinnacle Auto Sensor - Medium', 'Pinnacle', 'Automotive Parts', 'QuickShip Warehouse', 69.99, 'Medium Size', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-011', 'Clorox Heavy Duty Solvent 5kg', 'Clorox', 'Cleaning Supplies', 'ValueMax Outlet', 84.99, '5 Kilograms', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-012', 'Church & Dwight Coating 500ml', 'Church & Dwight', 'Home & Garden', 'MegaSupply Hub', 28.99, '500 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-013', 'Atlas Performance Motor - Small', 'Atlas', 'Automotive Parts', 'PrimeParts Direct', 149.99, 'Small Size', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-014', 'Titan XL Drive - Industrial Grade', 'Titan', 'Industrial & Scientific', 'TechDirect Store', 249.99, 'Extra Large', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-015', 'Summit Office Bracket 100g', 'Summit', 'Office & School', 'QuickShip Warehouse', 9.99, '100 Grams', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-016', 'Horizon Relay 50g - Precision', 'Horizon', 'Electronics & Gadgets', 'TechDirect Store', 57.99, '50 Grams', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-017', 'Nova Switch 1L - Premium', 'Nova', 'Consumer Products', 'MegaSupply Hub', 42.99, '1 Liter', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-018', 'Apex Processor Medium - Pro Series', 'Apex', 'Electronics & Gadgets', 'Global Manufacturing Co', 189.99, 'Medium Size', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-019', 'Vertex Industrial Adapter 250g', 'Vertex', 'Industrial & Scientific', 'PrimeParts Direct', 35.99, '250 Grams', CURRENT_TIMESTAMP()),
+('ECOM-DEMO-020', 'Fusion Auto Lubricant 2L', 'Fusion', 'Automotive Parts', 'QuickShip Warehouse', 48.99, '2 Liters', CURRENT_TIMESTAMP());
 
 ----------------------------------------------------------------------
 -- HERO RECORDS BATCH 2: Additional 30 cross-system products
@@ -463,7 +463,7 @@ VALUES
 ('ERP-HERO-049', 'Vertex', 'Coupling 500G', 'Industrial', 'Premier Manufacturing', 56.00, '500G', CURRENT_TIMESTAMP()),
 ('ERP-HERO-050', 'Vertex', 'Flange 1KG', 'Industrial', 'Premier Manufacturing', 72.00, '1KG', CURRENT_TIMESTAMP());
 
-INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.SUPPLIER_PRODUCT (SUPPLIER_CODE, BRAND, ITEM_NAME, CATEGORY_DESCRIPTION, MFG_NAME, UNIT_COST, PACK_SIZE, LOAD_DTTM)
+INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.SUPPLIER_PRODUCT (ITEM_CODE, BRAND, ITEM_NAME, CATEGORY_DESCRIPTION, MFG_NAME, UNIT_COST, PACK_SIZE, LOAD_DTTM)
 VALUES
 ('SUP-HERO-021', 'Procter & Gamble', 'Dishwash 750ML', 'Consumer/FMCG', 'Global Manufacturing Co', 11.00, '750ml', CURRENT_TIMESTAMP()),
 ('SUP-HERO-022', 'Procter & Gamble', 'Fabric Softener 2L', 'Consumer/FMCG', 'Global', 15.00, '2000ml', CURRENT_TIMESTAMP()),
@@ -529,35 +529,35 @@ VALUES
 ('SKU-HERO-049', 'VERTE', 'Coupling 500G', 'IND-STORE', 33.00, '0.5KG', CURRENT_TIMESTAMP()),
 ('SKU-HERO-050', 'VERTE', 'Flange 1KG', 'IND-STORE', 43.00, '1KG', CURRENT_TIMESTAMP());
 
-INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.ECOMMERCE_PRODUCT (WEB_SKU, VENDOR_NAME, LISTING_TITLE, WEB_CATEGORY, SELLER_NAME, SELLING_PRICE, DISPLAY_SIZE, LOAD_DTTM)
+INSERT INTO RELATIONSHIP_DISCOVERY_DB.SRC.ECOMMERCE_PRODUCT (VENDOR_CODE, LISTING_TITLE, VENDOR_NAME, WEB_CATEGORY, SELLER_NAME, SELLING_PRICE, DISPLAY_SIZE, LOAD_DTTM)
 VALUES
-('ECOM-HERO-021', 'Procter & Gamble', 'P&G Premium Dishwash 750ml', 'Consumer Products', 'MegaSupply Hub', 18.99, '750 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-022', 'Procter & Gamble', 'P&G Fabric Softener 2 Liter', 'Consumer Products', 'ValueMax Outlet', 24.99, '2 Liters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-023', 'Johnson & Johnson', 'J&J Bandage Large - Sterile', 'Health & Wellness', 'PrimeParts Direct', 10.99, 'Large Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-024', 'Johnson & Johnson', 'J&J Daily Shampoo 500ml', 'Beauty & Personal Care', 'QuickShip Warehouse', 14.99, '500 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-025', 'Unilever', 'Unilever Classic Soap Bar 100g', 'Beauty & Personal Care', 'MegaSupply Hub', 5.49, '100 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-026', 'Unilever', 'Unilever Moisturizer Cream 200ml', 'Beauty & Personal Care', 'ValueMax Outlet', 21.99, '200 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-027', 'Colgate', 'Colgate Fresh Toothpaste 150g', 'Beauty & Personal Care', 'QuickShip Warehouse', 7.49, '150 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-028', 'Colgate', 'Colgate Mouthwash 500ml - Mint', 'Beauty & Personal Care', 'PrimeParts Direct', 11.99, '500 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-029', 'Henkel', 'Henkel Pro Sealant 300ml', 'Industrial & Scientific', 'TechDirect Store', 29.99, '300 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-030', 'Henkel', 'Henkel Epoxy Resin 500g - Heavy Duty', 'Industrial & Scientific', 'TechDirect Store', 59.99, '500 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-031', 'Acme', 'Acme Smart Gadget 100g', 'Electronics & Gadgets', 'TechDirect Store', 38.99, '100 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-032', 'Acme', 'Acme Power Module 500ml', 'Electronics & Gadgets', 'Global Manufacturing Co', 57.99, '500 Milliliters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-033', 'Nexus', 'Nexus Precision Valve 250g', 'Industrial & Scientific', 'PrimeParts Direct', 79.99, '250 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-034', 'Nexus', 'Nexus Heavy Bearing 1kg', 'Industrial & Scientific', 'TechDirect Store', 119.99, '1 Kilogram', CURRENT_TIMESTAMP()),
-('ECOM-HERO-035', 'Pinnacle', 'Pinnacle Brake Pad - Medium', 'Automotive Parts', 'QuickShip Warehouse', 98.99, 'Medium Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-036', 'Pinnacle', 'Pinnacle Spark Plug - Small', 'Automotive Parts', 'PrimeParts Direct', 16.99, 'Small Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-037', 'Clorox', 'Clorox Original Bleach 1L', 'Cleaning Supplies', 'MegaSupply Hub', 12.99, '1 Liter', CURRENT_TIMESTAMP()),
-('ECOM-HERO-038', 'Clorox', 'Clorox Disinfectant Spray 2L', 'Cleaning Supplies', 'ValueMax Outlet', 19.99, '2 Liters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-039', 'Atlas', 'Atlas Performance Alternator - Large', 'Automotive Parts', 'PrimeParts Direct', 229.99, 'Large Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-040', 'Atlas', 'Atlas Starter Motor - Medium', 'Automotive Parts', 'QuickShip Warehouse', 179.99, 'Medium Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-041', 'Titan', 'Titan Industrial Compressor 5kg', 'Industrial & Scientific', 'TechDirect Store', 399.99, '5 Kilograms', CURRENT_TIMESTAMP()),
-('ECOM-HERO-042', 'Titan', 'Titan Turbine Large - Commercial', 'Industrial & Scientific', 'Global Manufacturing Co', 569.99, 'Large Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-043', 'Summit', 'Summit Office Stapler - Medium', 'Office & School', 'QuickShip Warehouse', 22.99, 'Medium Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-044', 'Summit', 'Summit Premium Binder - Large', 'Office & School', 'MegaSupply Hub', 15.99, 'Large Size', CURRENT_TIMESTAMP()),
-('ECOM-HERO-045', 'Horizon', 'Horizon Capacitor 25g - Precision', 'Electronics & Gadgets', 'TechDirect Store', 11.99, '25 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-046', 'Horizon', 'Horizon Transistor 10g - Micro', 'Electronics & Gadgets', 'TechDirect Store', 6.99, '10 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-047', 'Nova', 'Nova Connector 50g - Gold Plated', 'Electronics & Gadgets', 'PrimeParts Direct', 28.99, '50 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-048', 'Nova', 'Nova Premium Cable 5m', 'Electronics & Gadgets', 'MegaSupply Hub', 19.99, '5 Meters', CURRENT_TIMESTAMP()),
-('ECOM-HERO-049', 'Vertex', 'Vertex Industrial Coupling 500g', 'Industrial & Scientific', 'TechDirect Store', 72.99, '500 Grams', CURRENT_TIMESTAMP()),
-('ECOM-HERO-050', 'Vertex', 'Vertex Heavy Flange 1kg', 'Industrial & Scientific', 'PrimeParts Direct', 92.99, '1 Kilogram', CURRENT_TIMESTAMP());
+('ECOM-HERO-021', 'P&G Premium Dishwash 750ml', 'Procter & Gamble', 'Consumer Products', 'MegaSupply Hub', 18.99, '750 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-022', 'P&G Fabric Softener 2 Liter', 'Procter & Gamble', 'Consumer Products', 'ValueMax Outlet', 24.99, '2 Liters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-023', 'J&J Bandage Large - Sterile', 'Johnson & Johnson', 'Health & Wellness', 'PrimeParts Direct', 10.99, 'Large Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-024', 'J&J Daily Shampoo 500ml', 'Johnson & Johnson', 'Beauty & Personal Care', 'QuickShip Warehouse', 14.99, '500 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-025', 'Unilever Classic Soap Bar 100g', 'Unilever', 'Beauty & Personal Care', 'MegaSupply Hub', 5.49, '100 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-026', 'Unilever Moisturizer Cream 200ml', 'Unilever', 'Beauty & Personal Care', 'ValueMax Outlet', 21.99, '200 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-027', 'Colgate Fresh Toothpaste 150g', 'Colgate', 'Beauty & Personal Care', 'QuickShip Warehouse', 7.49, '150 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-028', 'Colgate Mouthwash 500ml - Mint', 'Colgate', 'Beauty & Personal Care', 'PrimeParts Direct', 11.99, '500 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-029', 'Henkel Pro Sealant 300ml', 'Henkel', 'Industrial & Scientific', 'TechDirect Store', 29.99, '300 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-030', 'Henkel Epoxy Resin 500g - Heavy Duty', 'Henkel', 'Industrial & Scientific', 'TechDirect Store', 59.99, '500 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-031', 'Acme Smart Gadget 100g', 'Acme', 'Electronics & Gadgets', 'TechDirect Store', 38.99, '100 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-032', 'Acme Power Module 500ml', 'Acme', 'Electronics & Gadgets', 'Global Manufacturing Co', 57.99, '500 Milliliters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-033', 'Nexus Precision Valve 250g', 'Nexus', 'Industrial & Scientific', 'PrimeParts Direct', 79.99, '250 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-034', 'Nexus Heavy Bearing 1kg', 'Nexus', 'Industrial & Scientific', 'TechDirect Store', 119.99, '1 Kilogram', CURRENT_TIMESTAMP()),
+('ECOM-HERO-035', 'Pinnacle Brake Pad - Medium', 'Pinnacle', 'Automotive Parts', 'QuickShip Warehouse', 98.99, 'Medium Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-036', 'Pinnacle Spark Plug - Small', 'Pinnacle', 'Automotive Parts', 'PrimeParts Direct', 16.99, 'Small Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-037', 'Clorox Original Bleach 1L', 'Clorox', 'Cleaning Supplies', 'MegaSupply Hub', 12.99, '1 Liter', CURRENT_TIMESTAMP()),
+('ECOM-HERO-038', 'Clorox Disinfectant Spray 2L', 'Clorox', 'Cleaning Supplies', 'ValueMax Outlet', 19.99, '2 Liters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-039', 'Atlas Performance Alternator - Large', 'Atlas', 'Automotive Parts', 'PrimeParts Direct', 229.99, 'Large Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-040', 'Atlas Starter Motor - Medium', 'Atlas', 'Automotive Parts', 'QuickShip Warehouse', 179.99, 'Medium Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-041', 'Titan Industrial Compressor 5kg', 'Titan', 'Industrial & Scientific', 'TechDirect Store', 399.99, '5 Kilograms', CURRENT_TIMESTAMP()),
+('ECOM-HERO-042', 'Titan Turbine Large - Commercial', 'Titan', 'Industrial & Scientific', 'Global Manufacturing Co', 569.99, 'Large Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-043', 'Summit Office Stapler - Medium', 'Summit', 'Office & School', 'QuickShip Warehouse', 22.99, 'Medium Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-044', 'Summit Premium Binder - Large', 'Summit', 'Office & School', 'MegaSupply Hub', 15.99, 'Large Size', CURRENT_TIMESTAMP()),
+('ECOM-HERO-045', 'Horizon Capacitor 25g - Precision', 'Horizon', 'Electronics & Gadgets', 'TechDirect Store', 11.99, '25 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-046', 'Horizon Transistor 10g - Micro', 'Horizon', 'Electronics & Gadgets', 'TechDirect Store', 6.99, '10 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-047', 'Nova Connector 50g - Gold Plated', 'Nova', 'Electronics & Gadgets', 'PrimeParts Direct', 28.99, '50 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-048', 'Nova Premium Cable 5m', 'Nova', 'Electronics & Gadgets', 'MegaSupply Hub', 19.99, '5 Meters', CURRENT_TIMESTAMP()),
+('ECOM-HERO-049', 'Vertex Industrial Coupling 500g', 'Vertex', 'Industrial & Scientific', 'TechDirect Store', 72.99, '500 Grams', CURRENT_TIMESTAMP()),
+('ECOM-HERO-050', 'Vertex Heavy Flange 1kg', 'Vertex', 'Industrial & Scientific', 'PrimeParts Direct', 92.99, '1 Kilogram', CURRENT_TIMESTAMP());
